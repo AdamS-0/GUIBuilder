@@ -1,0 +1,35 @@
+
+listViewItem, screenItem, screenItemSelected, controlItem {
+	display: block;
+	width: 100%;
+	margin: 1px;
+	user-select: none;
+	background: #ddd;
+}
+
+listViewItem:hover {
+	background: #aaa;
+}
+
+
+screenItem {
+	background: #ddd;
+}
+
+screenItemSelected {
+	background: #999;
+}
+
+screenItem:hover {
+	background: #ccc;
+}
+
+controlItem {
+	margin-left: 15px;
+	width: calc(100% - 15px);
+	background: #eee;
+}
+
+controlItem:hover {
+	background: #ddd;
+}
