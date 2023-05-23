@@ -288,7 +288,7 @@ class Label extends Control {
 		}
 		
 		strCode += className + ".setTextColor(" + colorF + ", " + colorBg + ");\n";
-		strCode += className + ".setTextSize(" + this.TestSize + ");\n";
+		strCode += className + ".setTextSize(" + this.TextSize + ");\n";
 		strCode += className + ".setCursor(" + this.X + "," + this.Y + ");\n";
 		strCode += className + ".print(\"" + this.Text + "\");\n";
 		
