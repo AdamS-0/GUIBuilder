@@ -195,12 +195,8 @@ function canvasDown(e) {
 		cvs.onmousemove = function(me) {
 			var px2 = Math.floor( ( me.pageX - cvsRect.left ) / scaleK );
 			var py2 = Math.floor( ( me.pageY - cvsRect.top ) / scaleK );
-<<<<<<< HEAD
-			ctrl.tryCursorModify( bx, by, parseInt(px), parseInt(py), parseInt(px2), parseInt(py2) );
-=======
 			
 			ctrl.tryCursorModify( baseX, baseY, parseInt(px), parseInt(py), parseInt(px2), parseInt(py2) );
->>>>>>> a03140ae734fece7bd9fbff3f561701f4685d975
 			refreshCurrentScreen();
 		};
 		
