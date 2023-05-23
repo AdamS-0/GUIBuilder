@@ -77,7 +77,7 @@ function createScreenByCopy( scr2copy ) {
 	var clIn;
 	for(; i < scr2copy.Controls.length; i++) {
 		clIn = scr2copy.Controls[i];
-		var cl = createControlByType(clIn["Type"]); //addNewControl(clIn["Type"], 0, 0, 0, scr);
+		var cl = createControlByType(clIn["Type"]);
 		scr.Controls.push( cl );
 		for( var key in clIn ) {
 			cl[key] = clIn[key];
