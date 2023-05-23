@@ -1,0 +1,101 @@
+.panelParent{
+	display: inline block;
+	width: 300px;
+	height: 100%;
+	float: left;
+}
+
+
+.topPanel {
+	display: inline block;
+	width: 100%;
+	background: #fff;
+	float: top;
+	border: solid 1px #000000;
+	margin: 3px;
+}
+
+.panel{
+	display: inline block;
+	width: 300px;
+	height: 100%;
+	background: #fff;
+	float: left;
+	border: solid 1px #000000;
+	margin: 3px;
+}
+
+.dock-right{
+	float: right;
+}
+
+.editor{
+	display: inline block;
+	width: 550px;
+	height: 100%;
+	background: #ddd;
+	float: left;
+	border: solid 1px #000000;
+	margin: 3px;
+	padding: 3px;
+	overflow: auto;
+}
+
+.label{
+	width: 100%;
+	background: #aaa;
+	user-select: none;
+}
+
+
+
+flatBtn {
+	border: none;
+	background: #ddd;
+	user-select: none;
+	padding: 1px;
+	padding-left: 2px;
+	/*display: block;*/
+}
+
+flatBtn:hover { background-color: #bbb; }
+
+
+dropdownOption {
+	border: none;
+	background: #fff;
+	user-select: none;
+	padding: 3px;
+	display: block;
+}
+dropdownOption:hover { background-color: #bbb; }
+
+
+.dropdown {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: #fff;
+	min-width: 100px;
+	z-index: 1;
+	border: 1px solid black;
+}
+
+.dropdown-content a {
+	padding-left: 2px;
+	color: black;
+	text-decoration: none;
+	display: block;
+}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+
+
+
+
+
