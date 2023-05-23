@@ -222,7 +222,7 @@ function generateCode() {
 		strCode += screens[i].generateCode(className);
 	}
 	
-	console.log( strCode );
+	downloadContent(strCode, "project.c");
 }
 
 
