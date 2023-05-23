@@ -1,19 +1,10 @@
 .panelParent{
-	display: inline block;
+	display: inline-block;
 	width: 300px;
 	height: 100%;
 	float: left;
 }
 
-
-.topPanel {
-	display: inline block;
-	width: 100%;
-	background: #fff;
-	float: top;
-	border: solid 1px #000000;
-	margin: 3px;
-}
 
 .panel{
 	display: inline block;
@@ -29,19 +20,83 @@
 	float: right;
 }
 
-.editor{
+#topPanel {
+	display: inline-block;
+	width: 100%;
+	background: #eee;
+	float: top;
+	margin: 0px;
+}
+
+#main{
+	display: block;
+	height: 600px;
+	width: 100%;
+}
+
+#toolbox{
+	width: 100px;
+	height: 100%;
+	float: left;
+	border: solid 1px #000000;
+	background-color: #fff;
+}
+
+
+#tree_props{
+	float: right;
+	display: block;
+	height: 100%;
+	width: 230px;
+}
+
+#tree{
+	height: 49%;
+	display: block;
+	width: 100%;
+	border: solid 1px;
+	margin-top: 3px;
+}
+
+#treeScreens{
+	overflow: auto;
+	width: 100%;
+	height: calc(100% - 22px);
+}
+
+#properties{
+	height: 49%;
+	display: block;
+	width: 100%;
+	border: solid 1px;
+	margin-top: 3px;
+}
+
+#tabProperties{
+	overflow: auto;
+	width: 100%;
+	height: calc(100% - 20px);
+}
+
+#editor{
 	display: inline block;
-	width: 550px;
 	height: 100%;
 	background: #ddd;
 	float: left;
-	border: solid 1px #000000;
-	margin: 3px;
+	margin: 0px 0px 0px 0px;
 	padding: 3px;
 	overflow: auto;
+	width: calc(100% - 100px - 230px - 15px);
 }
 
+#canvas{
+	image-rendering: pixelated;
+}
+
+
+
 .label{
+	display: inline-block;
 	width: 100%;
 	background: #aaa;
 	user-select: none;
@@ -51,14 +106,15 @@
 
 flatBtn {
 	border: none;
-	background: #ddd;
+	background: inherit;
 	user-select: none;
-	padding: 1px;
-	padding-left: 2px;
-	/*display: block;*/
+	padding: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	display: inline-block;
 }
 
-flatBtn:hover { background-color: #bbb; }
+flatBtn:hover { background-color: #ddd; }
 
 
 dropdownOption {

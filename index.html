@@ -13,7 +13,7 @@
 </head>
 <body onLoad="onload()" onkeydown="UI_onkeydown(event)">
 	
-	<div class="topPanel">
+	<div id="topPanel">
 		
 		<div class="dropdown">
 			<flatBtn>Project</flatBtn>
@@ -31,47 +31,64 @@
 		<div class="dropdown">
 			<flatBtn>Settings</flatBtn>
 			<div class="dropdown-content">
+				<dropdownOption style="min-width: 200px;">
+				<label for="scale">Scale:</label><input type="text" name="scale" id="scale" size="6" value="1" onchange="refreshCurrentScreen()"/>
+				</dropdownOption>
+				
+				<dropdownOption>
+				<label for="className">Display instance:</label>
+				<input id="className" type="text" value="tft" size="5"></input>
+				</dropdownOption>
+			</div>
+		</div>
+		
+		
+		<div class="dropdown">
+			<flatBtn>Font</flatBtn>
+			<div class="dropdown-content">
+				<dropdownOption>Load 6x8 font</dropdownOption>
+			</div>
+		</div>
+		
+		<div class="dropdown">
+			<flatBtn>Generate</flatBtn>
+			<div class="dropdown-content">
+				<dropdownOption onclick="generateCode()">C/C++ Code</dropdownOption>
 				
 			</div>
 		</div>
 		
-		<label for="scale">Scale:</label>
-		<input type="text" name="scale" id="scale" value="1" onchange="refreshCurrentScreen()"/>
-		
-		
-		<flatBtn>Load 6x8 font</flatBtn>
-		
-		<label for="className">Display instance:</label>
-		<input id="className" type="text" value="tft" size="5"></input>
-		<flatBtn onclick="generateCode()">Generate C/C++ Code</flatBtn>
 		
 	</div>
-	<div id="main" style="height: 600px;">
-		<div class="panel" id="toolbox" style="width: 100px;">
+	<div id="main">
+		<div id="toolbox">
 			<div class="label">ToolBox</div>
 			
 			
 		</div>
-		<div class="editor" id="editor" ondrop="drop(event)" ondragover="allowDrop(event)">
-			<canvas id="canvas" width="128" height="64" onmousedown="canvasDown(event)" style="image-rendering: pixelated;"></canvas>
-		</div>
-		<div class="panelParent" id="tree&props">
-			<div class="panel" id="tree" style="height: 50%;">
+		
+		<div id="tree_props">
+			<div id="tree">
 				<div class="label">Tree
 				<flatBtn onclick="addNewScreen();">Add screen</flatBtn>
 				<flatBtn onclick="deleteScreen();">Delete screen</flatBtn>
 				</div>
-				<div class="panelParent" id="treeScreens" style="overflow: auto;">
+				<div class="panelParent" id="treeScreens">
 					
 				</div>
 			</div>
-			<div class="panel" id="properties" style="height: 50%;">
-				<div class="label"><span>Properties</span><span id="propSender"></span></div>
-				<div class="panelParent" id="tabProperties" style="overflow: auto;">
+			<div id="properties">
+				<div class="label">Properties<span id="propSender"></span></div>
+				<div class="panelParent" id="tabProperties">
 					
 				</div>
 			</div>
 		</div>
+		
+		<div id="editor" ondrop="drop(event)" ondragover="allowDrop(event)">
+			<canvas id="canvas" width="128" height="64" onmousedown="canvasDown(event)"></canvas>
+		</div>
+		
 	</div>
 </body>
 </html>
