@@ -190,13 +190,13 @@ function canvasDown(e) {
 		showProps(scr);
 		selectedControl = null;
 	} else {
-		var bx = parseInt(ctrl.X);	var by = parseInt(ctrl.Y);
-		var dx = parseInt(px) - bx;	var dy = parseInt(py) - by;
+		var baseX = parseInt(ctrl.X);	var baseY = parseInt(ctrl.Y);
+		var dx = parseInt(px) - baseX;	var dy = parseInt(py) - baseY;
 		cvs.onmousemove = function(me) {
 			var px2 = Math.floor( ( me.pageX - cvsRect.left ) / scaleK );
 			var py2 = Math.floor( ( me.pageY - cvsRect.top ) / scaleK );
-			//ctrl.X = parseInt(px) - dx;	ctrl.Y = parseInt(py) - dy;
-			ctrl.tryCursorModify( bx, by, parseInt(px), parseInt(py), parseInt(px2), parseInt(py2) );
+			
+			ctrl.tryCursorModify( baseX, baseY, parseInt(px), parseInt(py), parseInt(px2), parseInt(py2) );
 			refreshCurrentScreen();
 		};
 		

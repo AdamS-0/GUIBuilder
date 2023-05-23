@@ -99,15 +99,11 @@ class Screen{
 		this.updateRGBcolor();
 		var strCode = "";
 		strCode += "void load_" + this.Name + "() {\n";
-		//strCode += "tft.fillScreen(0x" + componentToHex( RGB2565( this.ColorRGBA ), 4 ) + ");\n";
 		
 		var colorBg = "0";
 		
-		if( this.OneColor ) {
-			colorBg = RGB2binaryColor(this.ColorRGBA);
-		} else {
-			colorBg = "0x" + componentToHex( RGB2565( this.ColorRGBA ), 4 );
-		}
+		if( this.OneColor )	colorBg = RGB2binaryColor(this.ColorRGBA);
+		else 				colorBg = "0x" + componentToHex( RGB2565( this.ColorRGBA ), 4 );
 		
 		strCode += className + ".fillRect(0,0," + this.Width + "," + this.Height + "," + colorBg + ");\n";
 		for( var i = 0; i < this.Controls.length; i++ ) {
@@ -206,9 +202,7 @@ class Control {
 		this.ColorRGBA = hexToRgb( this.Color );
 	}
 	
-	draw(ctx) {
-		
-	}
+	draw(ctx) {}
 	
 	
 	checkCursorOver(x, y) {
