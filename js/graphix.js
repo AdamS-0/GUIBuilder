@@ -4,6 +4,10 @@ var fontWidthBase = 6;	var fontHeightBase = 8;
 var fontWidth = 6;	var fontHeight = 8;
 var fontSize = 1;
 
+function setCursor(x, y) { cX = parseInt( x ); cY = parseInt( y ); }
+function setFontSize(fSize) { fontSize = parseInt( fSize ); }
+
+
 function hexToRgb(hex) {
 	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 	
@@ -21,26 +25,9 @@ function componentToHex(c, places = 2) {
 	return hex;
 }
 
-function componentToHex2(c) {
-	var hex = c.toString(16);
-	return hex.length == 1 ? "0" + hex : hex;
-}
-
-function rgbToHex(r, g, b) {
-	return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
-
-function RGB2565(color) {
-	return ( ((color.r & 0xF8) << 8) | ((color.g & 0xFC) << 3) | (color.b >> 3) );
-}
-
-
-function RGB2binaryColor(color) {
-	return ( parseInt(color.g) + parseInt(color.g) + parseInt(color.b))/3 > 127 ? 1 : 0;
-}
-
-
+function rgbToHex(r, g, b) { return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b); }
+function RGB2565(color) { return ( ((color.r & 0xF8) << 8) | ((color.g & 0xFC) << 3) | (color.b >> 3) ); }
+function RGB2binaryColor(color) { return ( parseInt(color.g) + parseInt(color.g) + parseInt(color.b))/3 > 127 ? 1 : 0; }
 
 
 
@@ -76,8 +63,10 @@ function drawVLine(x0, y0, len, color) {
 
 
 function drawLine(x0, y0, x1, y1, color) {
-	if(x0 == x1)		drawVLine(x0, Math.min(y0, y1), Math.abs( parseInt(y1) - parseInt(y0) + 1 ), color);
-    else if(y0 == y1)	drawHLine(Math.min(x0, x1), y0, Math.abs( parseInt(x1) - parseInt(x0) + 1 ), color);
+    x0 = parseInt(x0);  y0 = parseInt(y0);
+    x1 = parseInt(x1);  y1 = parseInt(y1);
+	if(x0 == x1)		drawVLine(x0, Math.min(y0, y1), Math.abs( y1 - y0 ) + 1, color);
+    else if(y0 == y1)	drawHLine(Math.min(x0, x1), y0, Math.abs( x1 - x0 ) + 1, color);
     else {
         printLine(parseInt(x0), parseInt(y0), parseInt(x1), parseInt(y1), color);
     }
@@ -107,9 +96,9 @@ function printLine( x0, y0, x1, y1, color) {
 	
 
     for (; x0<=x1; x0++) {
-        if (steep) { setPixel(y0, x0, color);
-        } else { setPixel(x0, y0, color);
-        }
+        if (steep) setPixel(y0, x0, color);
+        else setPixel(x0, y0, color);
+        
         err -= dy;
         if (err < 0) {
             y0 += ystep;
@@ -293,19 +282,6 @@ function fillRoundRect(x, y, w, h, r, color) {
 }
 
 
-
-
-
-
-
-function setCursor(x, y) {
-	cx = parseInt( x ); cy = parseInt( y );
-}
-
-function setFontSize(fSize) {
-	fontSize = parseInt( fSize );
-}
-
 function writeChar(c, colorOn, colorOff) {
 	if( c == '\n' ) {
 		cx = 0;
@@ -323,13 +299,13 @@ function writeChar(c, colorOn, colorOff) {
 		cr = font[id];
 		for( j = 0; j < 8; j++ ) {
 			//setPixel( cx + i, cy + j, cr & 1 ? colorOn : colorOff );
-			fillRect(cx + i * fontSize, cy + j * fontSize, fontSize, fontSize, cr & 1 ? colorOn : colorOff);
+			fillRect(cX + i * fontSize, cY + j * fontSize, fontSize, fontSize, cr & 1 ? colorOn : colorOff);
 			cr = cr >> 1;
 		}
 		
 		id++;
 	}
-	cx += fontSize * fontWidth;
+	cX += fontSize * fontWidth;
 }
 
 

@@ -1,5 +1,5 @@
 
-const controlsLst = [ "Label", "Line", "HLine", "VLine", "Rectangle", "Circle" ];
+const controlsLst = [ "Label", "Line", "Rectangle", "Circle" ];
 
 var selectedControl = null;
 var screens = new Array();
@@ -77,8 +77,6 @@ function createControlByType(type, x = 0, y = 0) {
 	var c;
 	if( type == "Label" ) c = new Label("", x, y);
 	else if( type == "Line" ) c = new Line("", x, y);
-	else if( type == "HLine" ) c = new HLine("", x, y);
-	else if( type == "VLine" ) c = new VLine("", x, y);
 	else if( type == "Rectangle" ) c = new Rectangle("", x, y);
 	else if( type == "Circle" ) c = new Circle("", x, y);
 	else c = new Control("", x, y);
@@ -191,12 +189,12 @@ function canvasDown(e) {
 		selectedControl = null;
 	} else {
 		var baseX = parseInt(ctrl.X);	var baseY = parseInt(ctrl.Y);
-		var dx = parseInt(px) - baseX;	var dy = parseInt(py) - baseY;
 		cvs.onmousemove = function(me) {
 			var px2 = Math.floor( ( me.pageX - cvsRect.left ) / scaleK );
 			var py2 = Math.floor( ( me.pageY - cvsRect.top ) / scaleK );
-			
-			ctrl.tryCursorModify( baseX, baseY, parseInt(px), parseInt(py), parseInt(px2), parseInt(py2) );
+			var dx = parseInt(px2) - parseInt(px);	var dy = parseInt(py2) - parseInt(py);
+
+			ctrl.tryCursorModify( parseInt(dx), parseInt(dy) );
 			refreshCurrentScreen();
 		};
 		
