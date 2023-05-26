@@ -1,5 +1,5 @@
 
-const controlsLst = [ "Label", "Line", "Rectangle", "Circle" ];
+const controlsLst = [ "Label", "Line", "Rectangle", "Circle", "ProgressBar" ];
 
 var selectedControl = null;
 var screens = new Array();
@@ -79,6 +79,7 @@ function createControlByType(type, x = 0, y = 0) {
 	else if( type == "Line" ) c = new Line("", x, y);
 	else if( type == "Rectangle" ) c = new Rectangle("", x, y);
 	else if( type == "Circle" ) c = new Circle("", x, y);
+	else if( type == "ProgressBar" ) c = new ProgressBar("", x, y);
 	else c = new Control("", x, y);
 	return c;
 }

@@ -592,7 +592,7 @@ class Circle extends Control {
 class ProgressBar extends Rectangle {
 	Type = "ProgressBar";
 	static cnum = 0;
-	constructor(name, x = 0, y = 0, width = 10, height = 10, fill = 0, round = 0, r = 1) {
+	constructor(name, x = 0, y = 0, width = 30, height = 10, fill = 0, round = 0, r = 1) {
 		if( name.length == 0) name = "progressBar" + ProgressBar.cnum++;
 		super(name, x, y);
 		this.Width = width;
