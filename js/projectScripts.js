@@ -58,8 +58,8 @@ function loadFromJSON(jsonStr) {
 		screens.push( scr );
 	}
 	
-	loadScreensList();
 	selectedScreen = screens.length - 1;
+	loadScreensList();
 	selectedScreenChanged();
 }
 
