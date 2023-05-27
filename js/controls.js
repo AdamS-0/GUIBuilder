@@ -1,18 +1,34 @@
-function createRow(sender, tab, propType, propertyName, propertyValue) {
+function createRow(sender, tab, propType, propertyName, propertyValue, comboOptions = []) {
 	var row = tab.insertRow(-1);
 	var c0 = row.insertCell(0);	var c1 = row.insertCell(1);
-	
-	var elemInput = document.createElement("input"); elemInput.type = propType; elemInput.value = propertyValue;
-	if( propType == "number" ) elemInput.min = 0;
-	if( propType == "checkbox" ) elemInput.checked = propertyValue;
-	
+	var elemInput;
+	c1.style.display="inline-block";
+
+	if( propType == "combobox" ) {
+		elemInput = document.createElement("select");
+		for( var i = 0; i < comboOptions.length; i++ ){
+			var optEl = document.createElement("option");
+			optEl.value = comboOptions[i];
+			optEl.text = comboOptions[i];
+			elemInput.appendChild(optEl);
+			if( propertyValue == comboOptions[i] ) optEl.selected = true;
+		}
+	} else {
+		elemInput = document.createElement("input"); elemInput.type = propType; elemInput.value = propertyValue;
+		if( propType == "number" ) elemInput.min = 0;
+		if( propType == "checkbox" ) elemInput.checked = propertyValue;
+		
+	}
+
 	c0.innerHTML = propertyName;
-	c1.appendChild(elemInput);
+	elemInput.style.maxWidth = "100px";
 	elemInput.onchange = function(e){
 		if( propType == "checkbox" )	sender[propertyName] = 0 + e.target.checked;
 		else 							sender[propertyName] = e.target.value;
 		sender.requiredRefresh();
 	};
+	c1.appendChild(elemInput);
+
 }
 
 function addRowButton(senderScreen, senderControl, tab, text, onclick) {
@@ -50,6 +66,17 @@ function screenItemClick(e) {
 	selectedControl = null;
 }
 
+function screenItemDoubleClick(e) {
+	scrName = e.target.name;
+	
+	scr = screens.find( s => s.Name == scrName );
+	scr.showControlsAtList = !scr.showControlsAtList;
+	//selectedScreen = screens.indexOf(scr);
+	loadScreensList();
+	// showProps(scr);
+	// selectedControl = null;
+}
+
 
 
 function controlItemClick(e) {
@@ -68,25 +95,30 @@ function showProps(scr, ctrl) {
 	var tabProps = document.getElementById("tabProperties");
 	var spn = document.getElementById("propSender");
 	
+	var tab = document.createElement("table");
+	tab.style.display = "block";
+	tab.style.maxWidth = "230px";
+
 	if(ctrl == null) {
-		scr.showProperties(tabProps);
+		tab = scr.showProperties(tabProps, tab);
 		spn.innerHTML = " - " + scr.Name;
 		
 		selectedScreenChanged();
 		return;
 	}
 	
-	var tab = ctrl.showProperties(tabProps);
+	tab = ctrl.showProperties(tabProps, tab);
 	spn.innerHTML = " - " + scr.Name + " > " + ctrl.Name;
 	
 	addRowButton(scr, ctrl, tab, "Delete", function(){ deleteControl(scr, ctrl); });
-	addRowButton(scr, ctrl, tab, "To Back", function(){ sendToBack(scr, ctrl); });
-	addRowButton(scr, ctrl, tab, "To Front", function(){ sendToFront(scr, ctrl); });
+	addRowButton(scr, ctrl, tab, "To Back", function(){ sendControlToBack(scr, ctrl); });
+	addRowButton(scr, ctrl, tab, "To Front", function(){ bringControlToFront(scr, ctrl); });
 }
 
 
 
 class Screen{
+	showControlsAtList = 1;
 	Controls = new Array();
 	Name = "";
 	Width = 128;
@@ -104,16 +136,16 @@ class Screen{
 		
 	}
 	
-	showProperties(panel) {
+	showProperties(panel, tab) {
 		panel.innerHTML = "";
-		var tab = document.createElement("table");
 		createRow(this, tab, "text", "Name", this.Name);
-		createRow(this, tab, "text", "Color", this.Color);
+		createRow(this, tab, "color", "Color", this.Color);
 		createRow(this, tab, "number", "Width", this.Width);
 		createRow(this, tab, "number", "Height", this.Height);
 		createRow(this, tab, "checkbox", "OneColor", this.OneColor);
 		panel.appendChild(tab);
 		
+		return tab;
 	}
 	
 	
@@ -143,6 +175,15 @@ class Screen{
 	generateCode(className = "tft") {
 		this.updateRGBcolor();
 		var strCode = "";
+
+		for( var i = 0; i < this.Controls.length; i++ ) {
+			if( this.Controls[i].gotUpdater ) {
+				strCode += "\n// call this function to refresh control: " + this.Controls[i].Name + "\n";
+				strCode += this.Controls[i].generateCodeUpdater(className, this.OneColor);
+			}
+		}
+
+		strCode += "\n// call this function to refresh whole screen\n";
 		strCode += "void load_" + this.Name + "() {\n";
 		
 		var colorBg = "0";
@@ -178,6 +219,8 @@ class Control {
 	lastSize = null;
 
 	ParentScreen = null;
+
+	gotUpdater = false;
 	
 	static cnum = 0;
 	constructor(name, x = 0, y = 0) {
@@ -186,11 +229,10 @@ class Control {
 		this. X = x; this.Y = y;
 	}
 	
-	showProperties(panel) {
+	showProperties(panel, tab) {
 		panel.innerHTML = "";
-		var tab = document.createElement("table");
 		createRow(this, tab, "text", "Name", this.Name);
-		createRow(this, tab, "text", "Color", this.Color);
+		createRow(this, tab, "color", "Color", this.Color);
 		createRow(this, tab, "number", "X", this.X);
 		createRow(this, tab, "number", "Y", this.Y);
 		panel.appendChild(tab);
@@ -229,6 +271,10 @@ class Control {
 		return "";
 	}
 
+	generateCodeUpdater(className = "tft", oneColor = 0) {
+		return "";
+	}
+
 }
 
 
@@ -249,15 +295,16 @@ class Label extends Control {
 		this.TextSize = textSize;
 	}
 	
-	showProperties(panel) {
-		var tab = super.showProperties(panel);
+	showProperties(panel, tab) {
+		tab = super.showProperties(panel, tab);
 		createRow(this, tab, "text", "Text", this.Text);
-		createRow(this, tab, "text", "Background", this.Background);
+		createRow(this, tab, "color", "Background", this.Background);
 		createRow(this, tab, "number", "TextSize", this.TextSize);
 		return tab;
 	}
 	
 	updateRGBcolor() {
+		super.updateRGBcolor();
 		this.BackgroundRGBA = hexToRgb( this.Background );
 	}
 	
@@ -268,6 +315,8 @@ class Label extends Control {
 	}
 	
 	checkCursorOver(x, y) {
+		this.lastSize = { X: this.X, Y: this.Y };
+
 		return isBetween(x, this.X, parseInt(this.X) + parseInt(this.TextSize) * 6 * parseInt(this.Text.length) )
 			&& isBetween(y, this.Y, parseInt(this.Y) + parseInt(this.TextSize) * 8);
 	}
@@ -309,8 +358,8 @@ class Line extends Control {
 		this.EndY = endy;
 	}
 	
-	showProperties(panel) {
-		var tab = super.showProperties(panel);
+	showProperties(panel, tab) {
+		tab = super.showProperties(panel, tab);
 		createRow(this, tab, "number", "EndX", this.EndX);
 		createRow(this, tab, "number", "EndY", this.EndY);
 		return tab;
@@ -403,6 +452,10 @@ class Rectangle extends Control {
 	R = 0;
 	selectedEdgeH = 0;
 	selectedEdgeV = 0;
+
+	FillColor = "#FFFFFF";
+	FillColorRGBA = {r:0, g:0, b:0, a:255};
+
 	static cnum = 0;
 	constructor(name, x = 0, y = 0, width = 10, height = 10, fill = 0, round = 0, r = 1) {
 		if( name.length == 0) name = "rectangle" + Rectangle.cnum++;
@@ -414,43 +467,51 @@ class Rectangle extends Control {
 		this.R = r;
 	}
 	
-	showProperties(panel) {
-		var tab = super.showProperties(panel);
+	showProperties(panel, tab) {
+		tab = super.showProperties(panel, tab);
 		createRow(this, tab, "number", "Width", this.Width);
 		createRow(this, tab, "number", "Height", this.Height);
 		createRow(this, tab, "checkbox", "Fill", this.Fill);
+		createRow(this, tab, "color", "FillColor", this.FillColor);
 		createRow(this, tab, "checkbox", "Round", this.Round);
 		createRow(this, tab, "number", "R", this.R);
 		return tab;
 	}
+
+	updateRGBcolor() {
+		super.updateRGBcolor();
+		this.FillColorRGBA = hexToRgb( this.FillColor );
+	}
 	
 	draw(ctx) {
 		if(this.Round){
-			if(this.Fill)	fillRoundRect(this.X, this.Y, this.Width, this.Height, this.R, this.ColorRGBA);
-			else			drawRoundRect(this.X, this.Y, this.Width, this.Height, this.R, this.ColorRGBA);
+			if(this.Fill)	fillRoundRect(this.X, this.Y, this.Width, this.Height, this.R, this.FillColorRGBA);
+			drawRoundRect(this.X, this.Y, this.Width, this.Height, this.R, this.ColorRGBA);
 		} else {
-			if(this.Fill)	fillRect(this.X, this.Y, this.Width, this.Height, this.ColorRGBA);
-			else			drawRect(this.X, this.Y, this.Width, this.Height, this.ColorRGBA);
+			if(this.Fill)	fillRect(this.X, this.Y, this.Width, this.Height, this.FillColorRGBA);
+			drawRect(this.X, this.Y, this.Width, this.Height, this.ColorRGBA);
 		}
 	}
 	
 	checkCursorOver(x, y) {
 		
 		this.lastSize = { X: Number(this.X), Y: Number(this.Y), Width: Number(this.Width), Height: Number(this.Height) };
+		this.selectedEdgeH = 0;	this.selectedEdgeV = 0;
 
-		if( isBetween( x, this.lastSize.X - 1, this.lastSize.X + 1 ) ) this.selectedEdgeH = 1;
-		else if( isBetween( x, this.lastSize.X + this.lastSize.Width - 1, this.lastSize.X + this.lastSize.Width + 1 ) ) this.selectedEdgeH = 2;
+		var tx = parseInt(this.X), ty = parseInt(this.Y), tw = parseInt(this.Width), th = parseInt(this.Height);
+		if( !( isBetween(x, tx, tx + tw) && isBetween(y, ty, ty + th) ) ) return false;
+		
+		if( isBetween( x, tx - 1, tx + 1 ) )					this.selectedEdgeH = 1;
+		else if( isBetween( x, tx + tw - 1, tx + tw + 1 ) )		this.selectedEdgeH = 2;
 		else  this.selectedEdgeH = 0;
 
-		if( isBetween( y, this.lastSize.Y - 1, this.lastSize.Y + 1 ) ) this.selectedEdgeV = 1;
-		else if( isBetween( y, this.lastSize.Y + this.lastSize.Height - 1, this.lastSize.Y + this.lastSize.Height + 1 ) ) this.selectedEdgeV = 2;
+		if( isBetween( y, ty - 1, ty + 1 ) ) 				this.selectedEdgeV = 1;
+		else if( isBetween( y, ty + th - 1, ty + th + 1 ) )	this.selectedEdgeV = 2;
 		else  this.selectedEdgeV = 0;
 
 		if( this.selectedEdgeH != 0 || this.selectedEdgeV != 0 ) return true;
 
-		var tx = parseInt(this.X);	var ty = parseInt(this.Y);
-		var w = parseInt(this.Width);	var h = parseInt(this.Height);
-		if( isBetween(x, tx, tx + w - 1) && isBetween(y, ty, ty + h - 1) ) {
+		if( isBetween(x, tx, tx + tw - 1) && isBetween(y, ty, ty + th - 1) ) {
 			this.selectedEdgeH = 3;
 			this.selectedEdgeV = 3;
 			return true;
@@ -482,12 +543,14 @@ class Rectangle extends Control {
 		this.updateRGBcolor();
 		var strCode = "";
 		
-		var colorF = "1";
+		var colorF = "1", colorFill = "0";
 		
 		if( oneColor ) {
 			colorF = RGB2binaryColor(this.ColorRGBA);
+			colorFill = RGB2binaryColor( this.FillColorRGBA );
 		} else {
 			colorF = "0x" + componentToHex( RGB2565( this.ColorRGBA ), 4 );
+			colorFill = "0x" + componentToHex( RGB2565( this.FillColorRGBA ), 4 );
 		}
 		
 		strCode += className;
@@ -499,8 +562,16 @@ class Rectangle extends Control {
 			else 			strCode += ".drawRect(";
 		}
 		
-		strCode += this.X + "," + this.Y + "," + this.Width + "," + this.Height + ", " + colorF + ");\n";
+		strCode += this.X + "," + this.Y + "," + this.Width + "," + this.Height + (this.Round ? "," + this.R : " ") + ", " + colorFill + ");\n";
+
+
+
+		strCode += className;
+		if(this.Round)	strCode += ".drawRoundRect(";
+		else 			strCode += ".drawRect(";
 		
+		strCode += this.X + "," + this.Y + "," + this.Width + "," + this.Height + (this.Round ? "," + this.R : " ") + ", " + colorF + ");\n";
+
 		return strCode;
 	}
 }
@@ -514,6 +585,10 @@ class Circle extends Control {
 	Fill = 0;
 	R = 0;
 	selectedBorder = 0; // 0 - click in middle, 1 - click on border
+
+	FillColor = "#FFFFFF";
+	FillColorRGBA = {r:0, g:0, b:0, a:255};
+
 	static cnum = 0;
 	constructor(name, x = 0, y = 0, r = 3) {
 		if( name.length == 0) name = "circle" + Rectangle.cnum++;
@@ -521,16 +596,22 @@ class Circle extends Control {
 		this.R = r;
 	}
 	
-	showProperties(panel) {
-		var tab = super.showProperties(panel);
+	showProperties(panel, tab) {
+		tab = super.showProperties(panel, tab);
 		createRow(this, tab, "number", "R", this.R);
 		createRow(this, tab, "checkbox", "Fill", this.Fill);
+		createRow(this, tab, "color", "FillColor", this.FillColor);
 		return tab;
 	}
 	
+	updateRGBcolor() {
+		super.updateRGBcolor();
+		this.FillColorRGBA = hexToRgb( this.FillColor );
+	}
+
 	draw(ctx) {
-		if(this.Fill)	fillCircle(this.X, this.Y, this.R, this.ColorRGBA);
-		else			drawCircle(this.X, this.Y, this.R, this.ColorRGBA);
+		if(this.Fill)	fillCircle(this.X, this.Y, this.R, this.FillColorRGBA);
+		drawCircle(this.X, this.Y, this.R, this.ColorRGBA);
 	}
 	
 	checkCursorOver(x, y) {
@@ -587,10 +668,22 @@ class Circle extends Control {
 
 
 
-
+const Directions = {
+	Left2Right: "Left to right",
+	Righ2Left: "Right to left",
+	Top2Bottom: "Top to bottom",
+	Bottom2Top: "Bottom to top"
+}
 
 class ProgressBar extends Rectangle {
 	Type = "ProgressBar";
+	
+	Direction = Directions.Left2Right; // 0: L->R, 1: R->L, 2: T->B, 3: B->T
+
+	BorderColor = "#FFFFFF";
+	BorderColorRGBA = {r:0, g:0, b:0, a:255};
+
+	gotUpdater = true;
 	static cnum = 0;
 	constructor(name, x = 0, y = 0, width = 30, height = 10, fill = 0, round = 0, r = 1) {
 		if( name.length == 0) name = "progressBar" + ProgressBar.cnum++;
@@ -602,24 +695,41 @@ class ProgressBar extends Rectangle {
 		this.R = r;
 	}
 	
-	showProperties(panel) {
-		var tab = super.showProperties(panel);
-		createRow(this, tab, "number", "Width", this.Width);
-		createRow(this, tab, "number", "Height", this.Height);
-		createRow(this, tab, "checkbox", "Fill", this.Fill);
-		createRow(this, tab, "checkbox", "Round", this.Round);
-		createRow(this, tab, "number", "R", this.R);
+
+	updateRGBcolor() {
+		super.updateRGBcolor();
+		this.BorderColorRGBA = hexToRgb( this.BorderColor );
+	}
+
+	showProperties(panel, tab) {
+		tab = super.showProperties(panel, tab);
+		createRow(this, tab, "combobox", "Direction", this.Direction,  Object.values(Directions) );
+		createRow(this, tab, "color", "BorderColor", this.BorderColor);
 		return tab;
 	}
 	
 	draw(ctx) {
-		if(this.Round){
-			if(this.Fill)	fillRoundRect(this.X, this.Y, this.Width, this.Height, this.R, this.ColorRGBA);
-			else			drawRoundRect(this.X, this.Y, this.Width, this.Height, this.R, this.ColorRGBA);
-		} else {
-			if(this.Fill)	fillRect(this.X, this.Y, this.Width, this.Height, this.ColorRGBA);
-			else			drawRect(this.X, this.Y, this.Width, this.Height, this.ColorRGBA);
+		var fillValue = 0.6;
+
+		var x = Number(this.X), y = Number(this.Y), w = Number(this.Width), h = Number(this.Height);
+
+		if( this.Direction == Directions.Righ2Left )		x = Math.round( x + (1 - fillValue)*w );
+		else if( this.Direction == Directions.Bottom2Top )	y = Math.round( y + (1 - fillValue)*h );
+		
+		if( this.Direction == Directions.Left2Right || this.Direction == Directions.Righ2Left )			w = Math.round(fillValue*w);
+		else if( this.Direction == Directions.Top2Bottom || this.Direction == Directions.Bottom2Top )	h = Math.round(fillValue*h);
+
+		if(this.Fill) {
+			if(this.Round)	fillRoundRect(this.X, this.Y, this.Width, this.Height, this.R, this.FillColorRGBA);
+			else			fillRect(this.X, this.Y, this.Width, this.Height, this.FillColorRGBA);
 		}
+
+		if(this.Round)	fillRoundRect(x, y, w, h, this.R, this.ColorRGBA);
+		else			fillRect(x, y, w, h, this.ColorRGBA);
+
+		if(this.Round)	drawRoundRect(this.X, this.Y, this.Width, this.Height, this.R, this.BorderColorRGBA);
+		else 			drawRect(this.X, this.Y, this.Width, this.Height, this.BorderColorRGBA);
+		
 	}
 	
 
@@ -628,25 +738,94 @@ class ProgressBar extends Rectangle {
 		this.updateRGBcolor();
 		var strCode = "";
 		
-		var colorF = "1";
+		var colorF = "1", colorFill = "1", colorBorder = "0";
 		
 		if( oneColor ) {
 			colorF = RGB2binaryColor(this.ColorRGBA);
+			colorFill = RGB2binaryColor(this.FillColorRGBA);
+			colorBorder = RGB2binaryColor(this.BorderColorRGBA);
 		} else {
 			colorF = "0x" + componentToHex( RGB2565( this.ColorRGBA ), 4 );
+			colorFill = "0x" + componentToHex( RGB2565( this.FillColorRGBA ), 4 );
+			colorBorder = "0x" + componentToHex( RGB2565( this.BorderColorRGBA ), 4 );
 		}
 		
+		var x = Number(this.X) + 1, y = Number(this.Y) + 1, w = Number(this.Width) - 2, h = Number(this.Height) - 2;
+
+		if(this.Fill) {
+			strCode += className;
+			if(this.Round)	strCode += ".fillRoundRect(";
+			else			strCode += ".fillRect(";
+			strCode += this.X + "," + this.Y + "," + this.Width + "," + this.Height + (this.Round ? "," + this.R : " ") + ", " + colorFill + ");\n";
+		}
+
 		strCode += className;
-		if(this.Round){
-			if(this.Fill)	strCode += ".fillRoundRect(";
-			else			strCode += ".drawRoundRect(";
+		if(this.Round)	strCode += ".drawRoundRect(";
+		else 			strCode += ".drawRect(";
+		
+		strCode += this.X + "," + this.Y + "," + this.Width + "," + this.Height + (this.Round ? "," + this.R : " ") + ", " + colorBorder + ");\n";
+		
+		return strCode;
+	}
+
+	generateCodeUpdater(className = "tft", oneColor = 0) {
+		this.updateRGBcolor();
+		var strCode = "";
+		
+		var colorF = "1", colorFill = "1", colorBorder = "0", colorBack = "0";
+		
+		if( oneColor ) {
+			colorF = RGB2binaryColor(this.ColorRGBA);
+			colorFill = RGB2binaryColor(this.FillColorRGBA);
+			colorBorder = RGB2binaryColor(this.BorderColorRGBA);
+			colorBack = RGB2binaryColor( this.ParentScreen.ColorRGBA );
 		} else {
-			if(this.Fill)	strCode += ".fillRect(";
-			else 			strCode += ".drawRect(";
+			colorF = "0x" + componentToHex( RGB2565( this.ColorRGBA ), 4 );
+			colorFill = "0x" + componentToHex( RGB2565( this.FillColorRGBA ), 4 );
+			colorBorder = "0x" + componentToHex( RGB2565( this.BorderColorRGBA ), 4 );
+			colorBack = "0x" + componentToHex( RGB2565( this.ParentScreen.ColorRGBA ), 4 );
 		}
+
+		var x = Number(this.X) + 1, y = Number(this.Y) + 1, w = Number(this.Width) - 2, h = Number(this.Height) - 2;
+
+		strCode += "void " + this.Name + "_update(double value) {\n";
+		strCode += "uint16_t x = " + x + ", y = " + y + ";\ndouble w = " + w + ", h = " + h + ";\n";
+		strCode += "if( value < 0 ) value = 0;\n";
+		strCode += "if( value > 1 ) value = 1;\n";
+
+		strCode += className;
+		if(this.Round)	strCode += ".fillRoundRect(";
+		else			strCode += ".fillRect(";
+		strCode += this.X + "," + this.Y + "," + this.Width + "," + this.Height + (this.Round ? "," + this.R : " ") + ", " + colorBack + ");\n";
 		
-		strCode += this.X + "," + this.Y + "," + this.Width + "," + this.Height + ", " + colorF + ");\n";
+		if( this.Direction == Directions.Righ2Left )
+			strCode += "x = round( " + x + " + (1 - value)*" + w + " );\n";
+		else if( this.Direction == Directions.Bottom2Top )
+			strCode += "y = round( " + y + " + (1 - value)*" + h + " );\n";
 		
+		if( this.Direction == Directions.Left2Right || this.Direction == Directions.Righ2Left )
+			strCode += "w = round(value*w);\n";
+		else if( this.Direction == Directions.Top2Bottom || this.Direction == Directions.Bottom2Top )
+			strCode += "h = round(value*h);\n";
+
+
+		if(this.Fill) {
+			strCode += className;
+			if(this.Round)	strCode += ".fillRoundRect(";
+			else			strCode += ".fillRect(";
+			strCode += this.X + "," + this.Y + "," + this.Width + "," + this.Height + (this.Round ? "," + this.R : " ") + ", " + colorFill + ");\n";
+		}
+
+		strCode += className + ".fill" + (this.Round ? "RoundRect" : "Rect") + "( x, y, w, h," + (this.Round ? this.R : " ") + "," + colorF + ");\n";
+
+		strCode += className;
+		if(this.Round)	strCode += ".drawRoundRect(";
+		else 			strCode += ".drawRect(";
+		
+		strCode += this.X + "," + this.Y + "," + this.Width + "," + this.Height + (this.Round ? "," + this.R : " ") + ", " + colorBorder + ");\n";
+
+
+		strCode += "}\n";
 		return strCode;
 	}
 }

@@ -43,7 +43,7 @@
 		</div>
 		
 		
-		<div class="dropdown">
+		<div class="dropdown" style="display: none;">
 			<flatBtn>Font</flatBtn>
 			<div class="dropdown-content">
 				<dropdownOption>Load 6x8 font</dropdownOption>
@@ -70,8 +70,9 @@
 		<div id="tree_props">
 			<div id="tree">
 				<div class="label">Tree
-				<flatBtn onclick="addNewScreen();">Add screen</flatBtn>
-				<flatBtn onclick="deleteScreen();">Delete screen</flatBtn>
+				<flatBtn onclick="addNewScreen();">Scr +</flatBtn>
+				<flatBtn onclick="deleteScreen();">Scr -</flatBtn>
+				<flatBtn onclick="duplicateScreen();">Scr copy</flatBtn>
 				</div>
 				<div class="panelParent" id="treeScreens">
 					
@@ -85,10 +86,19 @@
 			</div>
 		</div>
 		
-		<div id="editor" ondrop="drop(event)" ondragover="allowDrop(event)">
-			<canvas id="canvas" width="128" height="64" onmousedown="canvasDown(event)"></canvas>
+		<div style="height: 100%;">
+			<div style="background: white;">
+				<flatBtnTab id="btnTabEditor" onclick="showEditor();">Editor</flatBtnTab>
+				<flatBtnTab id="btnTabCode" onclick="showCode();">Code</flatBtnTab>
+			</div>
+			<div id="editor_code">
+				<div id="editor">
+					<canvas id="canvas" width="128" height="64" onmousedown="canvasDown(event)" ondrop="drop(event)" ondragover="allowDrop(event)"></canvas>
+				</div>
+
+				<textarea id="txtCode"></textarea>
+			</div>
 		</div>
-		
 	</div>
 </body>
 </html>

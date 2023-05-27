@@ -1,5 +1,5 @@
 
-const controlsLst = [ "Label", "Line", "Rectangle", "Circle", "ProgressBar" ];
+const controlsLst = [ "Circle", "Label", "Line", "ProgressBar", "Rectangle" ];
 
 var selectedControl = null;
 var screens = new Array();
@@ -14,6 +14,7 @@ function onload() {
 	addNewScreen("");
 	loadToolBox();
 	loadScreensList();
+	showEditor();
 }
 
 function loadToolBox() {
@@ -36,19 +37,22 @@ function loadScreensList() {
 	
 	for( var i = 0; i < screens.length; i++ ) {
 		var item = document.createElement("screenItem" + ( selectedScreen == i ? "Selected" : ""));
-		item.innerHTML = screens[i].Name + ( selectedScreen == i ? " <- Selected" : "");
+		item.innerHTML = "[" + (screens[i].showControlsAtList ? "/\\" : "\\/") + "] " + screens[i].Name + ( selectedScreen == i ? " <- Selected" : "");
 		item.name = screens[i].Name;
 		item.onclick = screenItemClick;
+		item.ondblclick = screenItemDoubleClick;
 		p.appendChild(item);
 		
-		for(j = 0; j < screens[i].Controls.length; j++) {
-			var c = document.createElement("controlItem");
-			var cName = screens[i].Controls[j].Name;
-			c.innerHTML = cName;
-			c.name = cName;
-			c.scrName = item.name;
-			c.onclick = controlItemClick;
-			p.appendChild(c);
+		if( screens[i].showControlsAtList ) {
+			for(j = 0; j < screens[i].Controls.length; j++) {
+				var c = document.createElement("controlItem");
+				var cName = screens[i].Controls[j].Name;
+				c.innerHTML = cName;
+				c.name = cName;
+				c.scrName = item.name;
+				c.onclick = controlItemClick;
+				p.appendChild(c);
+			}
 		}
 	}
 	
@@ -128,6 +132,18 @@ function deleteScreen() {
 	}
 }
 
+
+function duplicateScreen() {
+	if (selectedScreen < 0 || selectedScreen >= screens.length) return;
+	
+	var scrNew = createScreenByCopy( screens[selectedScreen] );
+	while( screens.findIndex( s => s.Name == scrNew.Name ) >= 0 ) scrNew.Name += "1";
+
+	screens.push( scrNew );
+	loadScreensList();
+	selectedScreen = screens.length - 1;
+	selectedScreenChanged();
+}
 
 
 function selectedScreenChanged() {
@@ -216,13 +232,75 @@ function canvasDown(e) {
 
 function generateCode() {
 	var strCode = "";
+	
 	var className = document.getElementById("className").value;
 	for( var i = 0; i < screens.length; i++ ) {
 		strCode += screens[i].generateCode(className);
 	}
 	
-	downloadContent(strCode, "project.c");
+	// downloadContent(strCode, "project.c");
+	var codePanel = document.getElementById("txtCode");
+	codePanel.textContent = strCode;
+	showCode();
 }
 
+
+
+
+
+
+
+function showEditor() {
+	var editorPanel = document.getElementById("editor");
+	var codePanel = document.getElementById("txtCode");
+	var btnEditor = document.getElementById("btnTabEditor");
+	var btnCode = document.getElementById("btnTabCode");
+
+	editorPanel.style.display = "inline-block";
+	codePanel.style.display = "none";
+
+	btnEditor.style.background = "#ddd";
+	btnCode.style.background = "inherit";
+}
+
+
+function showCode() {
+	var editorPanel = document.getElementById("editor");
+	var codePanel = document.getElementById("txtCode");
+	var btnEditor = document.getElementById("btnTabEditor");
+	var btnCode = document.getElementById("btnTabCode");
+
+	codePanel.style.display = "inline-block";
+	editorPanel.style.display = "none";
+	btnCode.style.background = "#ddd";
+	btnEditor.style.background = "inherit";
+}
+
+
+
+function bringControlToFront() {
+	if( selectedScreen < 0 || selectedScreen >= screens.length ) return;
+	if( selectedControl ) {
+		var cntrlId = screens[selectedScreen].Controls.indexOf(selectedControl);
+		if( cntrlId < 0 ) return;
+		screens[selectedScreen].Controls.splice(cntrlId, 1);
+		screens[selectedScreen].Controls.push(selectedControl);
+	}
+
+	loadScreensList();
+}
+
+
+function sendControlToBack() {
+	if( selectedScreen < 0 || selectedScreen >= screens.length ) return;
+	if( selectedControl ) {
+		var cntrlId = screens[selectedScreen].Controls.indexOf(selectedControl);
+		if( cntrlId < 0 ) return;
+		screens[selectedScreen].Controls.splice(cntrlId, 1);
+		screens[selectedScreen].Controls.unshift(selectedControl);
+	}
+
+	loadScreensList();
+}
 
 
