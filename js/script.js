@@ -181,6 +181,23 @@ function UI_onkeydown(ev) {
 
 
 
+
+
+
+
+
+
+function getTopControl(screen, cursorX, cursorY) {	
+	for( var i = screen.Controls.length - 1; i >= 0; i-- ) {
+		if( screen.Controls[i].checkCursorOver(cursorX, cursorY) ) {
+			showProps( screen, screen.Controls[i] );
+			return screen.Controls[i];
+		}
+	}
+
+	return null;
+}
+
 function canvasDown(e) {
 	e = e || window.event;
 	var cvs = document.getElementById("canvas");
@@ -191,21 +208,12 @@ function canvasDown(e) {
 	if( selectedScreen < 0 || selectedScreen >= screens.length ) return;
 	
 	var scr = screens[selectedScreen];
-	var ctrl = null;
+	var ctrl = getTopControl(scr, px, py);
 	
-	var gotTopControl = false;
-	for( var i = scr.Controls.length - 1; i >= 0 && gotTopControl == false; i-- ) {
-		if( gotTopControl = scr.Controls[i].checkCursorOver(px, py) ) {
-			showProps( scr, scr.Controls[i] );
-			ctrl = scr.Controls[i];
-		}
-	}
-	
-	if( !gotTopControl ) {
+	if( ctrl == null ) {
 		showProps(scr);
 		selectedControl = null;
 	} else {
-		var baseX = parseInt(ctrl.X);	var baseY = parseInt(ctrl.Y);
 		cvs.onmousemove = function(me) {
 			var px2 = Math.floor( ( me.pageX - cvsRect.left ) / scaleK );
 			var py2 = Math.floor( ( me.pageY - cvsRect.top ) / scaleK );

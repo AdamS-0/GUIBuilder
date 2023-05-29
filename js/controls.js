@@ -296,6 +296,7 @@ class Label extends Control {
 	}
 	
 	showProperties(panel, tab) {
+		this.TextSize = parseInt(this.TextSize);
 		tab = super.showProperties(panel, tab);
 		createRow(this, tab, "text", "Text", this.Text);
 		createRow(this, tab, "color", "Background", this.Background);
@@ -372,7 +373,7 @@ class Line extends Control {
 
 
 	checkCursorOver(x, y) {
-		var R0 = getRsqr(x, y, this.X, this.Y);
+		var R0 = Math.abs( getRsqr(x, y, this.X, this.Y) );
 		
 		this.lastSize = { X: Number(this.X), Y: Number(this.Y), EndX: Number(this.EndX), EndY: Number(this.EndY) };
 
@@ -380,7 +381,7 @@ class Line extends Control {
 			this.selectedVert = 1;
 			return true;
 		}
-		var R1 = getRsqr(x, y, this.EndX, this.EndY);
+		var R1 = Math.abs( getRsqr(x, y, this.EndX, this.EndY) );
 		
 		if (R1 < 2) {
 			this.selectedVert = 2;
@@ -390,14 +391,15 @@ class Line extends Control {
 		var dX = this.EndX - this.X;	var dY = this.EndY - this.Y; // delta XY of line
 		var cdX = x - this.X;	var cdY = y - this.Y; // delta XY of cursor
 		
-		R0 = Math.sqrt( R0 );
+		R0 = Math.abs( Math.sqrt( R0 ) ); // radius: cursor <-> (X, Y)
+		var RLine = Math.abs( Math.sqrt( getRsqr(this.X, this.Y, this.EndX, this.EndY) ) ); // line length
 		var alphaL = Math.atan2( dY, dX ); // alpha line
 		var alphaC = Math.atan2( cdY, cdX ); // alpha cursor
 		var alpha = -alphaL + alphaC;
 		var c2x = R0 * Math.cos( alpha );
 		
 		this.selectedVert = 0;
-		if( !isBetween(c2x, 0, R0) ) return false;
+		if( !isBetween(c2x, 0, RLine) ) return false;
 		
 		var c2y = R0 * Math.sin( alpha );
 		if( Math.abs( c2y ) < 2 ) return true;
@@ -750,8 +752,6 @@ class ProgressBar extends Rectangle {
 			colorBorder = "0x" + componentToHex( RGB2565( this.BorderColorRGBA ), 4 );
 		}
 		
-		var x = Number(this.X) + 1, y = Number(this.Y) + 1, w = Number(this.Width) - 2, h = Number(this.Height) - 2;
-
 		if(this.Fill) {
 			strCode += className;
 			if(this.Round)	strCode += ".fillRoundRect(";
@@ -788,7 +788,7 @@ class ProgressBar extends Rectangle {
 
 		var x = Number(this.X) + 1, y = Number(this.Y) + 1, w = Number(this.Width) - 2, h = Number(this.Height) - 2;
 
-		strCode += "void " + this.Name + "_update(double value) {\n";
+		strCode += "void " + this.ParentScreen.Name + "_" + this.Name + "_update(double value) {\n";
 		strCode += "uint16_t x = " + x + ", y = " + y + ";\ndouble w = " + w + ", h = " + h + ";\n";
 		strCode += "if( value < 0 ) value = 0;\n";
 		strCode += "if( value > 1 ) value = 1;\n";
