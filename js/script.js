@@ -18,7 +18,7 @@ function onload() {
 }
 
 function loadToolBox() {
-	var p = document.getElementById("toolbox");
+	var p = document.getElementById("panelToolbox");
 	
 	for( var i = 0; i < controlsLst.length; i++ ) {
 		var item = document.createElement("listViewItem");
@@ -37,20 +37,22 @@ function loadScreensList() {
 	
 	for( var i = 0; i < screens.length; i++ ) {
 		var item = document.createElement("screenItem" + ( selectedScreen == i ? "Selected" : ""));
-		item.innerHTML = "[" + (screens[i].showControlsAtList ? "/\\" : "\\/") + "] " + screens[i].Name + ( selectedScreen == i ? " <- Selected" : "");
+		item.innerHTML = "[" + (screens[i].showControlsAtList ? "\\/" : "/\\") + "] " + screens[i].Name + ( selectedScreen == i ? " <- Selected" : "");
 		item.name = screens[i].Name;
-		item.onclick = screenItemClick;
+		item.onmousedown = screenItemClick;
 		item.ondblclick = screenItemDoubleClick;
+		item.oncontextmenu = contextMenuTreeScreens;
 		p.appendChild(item);
 		
 		if( screens[i].showControlsAtList ) {
 			for(j = 0; j < screens[i].Controls.length; j++) {
 				var c = document.createElement("controlItem");
 				var cName = screens[i].Controls[j].Name;
-				c.innerHTML = cName;
+				c.innerHTML = cName + " : " + screens[i].Controls[j].constructor.name;
 				c.name = cName;
 				c.scrName = item.name;
 				c.onclick = controlItemClick;
+				c.oncontextmenu = contextMenuTreeControls;
 				p.appendChild(c);
 			}
 		}
@@ -91,6 +93,8 @@ function createControlByType(type, x = 0, y = 0) {
 
 // [ "Label", "Line", "HLine", "VLine", "Rectangle", "Shape" ];
 function addNewControl(name, x, y, refresh = 1) {
+	if( selectedScreen < 0 ) addNewScreen();
+
 	var c = createControlByType(name, x, y);
 	c.ParentScreen = screens[selectedScreen];
 	
@@ -100,18 +104,29 @@ function addNewControl(name, x, y, refresh = 1) {
 	return c;
 }
 
-function deleteControl(scr, cntrl) {
+function deleteControl(scr, cntrl, _showProps = 1) {
 	if (scr == null) return;
 	
 	cntrlId = scr.Controls.indexOf(cntrl);
 	if( cntrlId < 0 ) return;
 	scr.Controls.splice(cntrlId, 1); // 2nd parameter means remove one item only
-	loadScreensList();
-	selectedScreenChanged();
+	if( _showProps ) {
+		loadScreensList();
+		selectedScreenChanged();
+		showProps(scr);
+	}
 	cntrl = null;
-	showProps(scr);
 }
 
+function deleteSelectedControls() {
+	var selectedControls = getSelectedControls();
+	for( var i = 0; i < selectedControls.length; i++ )
+		deleteControl( selectedControls[i].ParentScreen, selectedControls[i], false );
+	
+	loadScreensList();
+	selectedScreenChanged();
+	showProps();
+}
 
 
 
@@ -155,104 +170,35 @@ function refreshCurrentScreen() {
 	scaleK = cmbBx.value;
 	if( selectedScreen < 0 || selectedScreen >= screens.length ) return;
 	
-	var cvs = document.getElementById("canvas");
+	var cvsDest = document.getElementById("canvas");
+	var cvs = document.createElement("canvas");
+	cvs.width = screens[selectedScreen].Width;
+	cvs.height = screens[selectedScreen].Height;
 	var ctx = cvs.getContext("2d");
 	ctx.lineWidth = 0.5;
 	startDrawing(cvs, ctx);
 	screens[selectedScreen].updateRGBcolor();
 	screens[selectedScreen].refresh(cvs, ctx);
 	stopDrawing(ctx);
-}
 
+	cvsDest.width = screens[selectedScreen].Width * scaleK;
+	cvsDest.height = screens[selectedScreen].Height * scaleK;
+	var ctxDest = cvsDest.getContext("2d");
 
+	ctxDest.webkitImageSmoothingEnabled = false;
+	ctxDest.mozImageSmoothingEnabled = false;
+	ctxDest.imageSmoothingEnabled = false;
 
-function UI_onkeydown(ev) {
-	
-	if( selectedControl ) {
-		key = ev.keyCode;
-		if( ev.keyCode >= 37 && ev.keyCode <= 40 ) {
-			var dx = 0 + -1*(key == 37) + (key == 39);
-			var dy = 0 + -1*(key == 38) + (key == 40);
-			selectedControl.moveBy(dx, dy);
-			
-		}
+	ctxDest.drawImage(cvs, 0, 0, cvs.width, cvs.height, 0, 0, cvsDest.width, cvsDest.height);
+
+	var chkBxShowBBoxes = document.getElementById("showBoundingBoxes");
+	if(chkBxShowBBoxes.checked) {
+		ctxDest.lineWidth = "1";
+		ctxDest.strokeStyle = "red";
+		ctxDest.fillStyle = "red";
+		screens[selectedScreen].drawBounding(ctxDest);
 	}
 }
-
-
-
-
-
-
-
-
-
-function getTopControl(screen, cursorX, cursorY) {	
-	for( var i = screen.Controls.length - 1; i >= 0; i-- ) {
-		if( screen.Controls[i].checkCursorOver(cursorX, cursorY) ) {
-			showProps( screen, screen.Controls[i] );
-			return screen.Controls[i];
-		}
-	}
-
-	return null;
-}
-
-function canvasDown(e) {
-	e = e || window.event;
-	var cvs = document.getElementById("canvas");
-	var cvsRect = cvs.getBoundingClientRect();
-	px = Math.floor( ( e.pageX - cvsRect.left ) / scaleK );
-	py = Math.floor( ( e.pageY - cvsRect.top ) / scaleK );
-	
-	if( selectedScreen < 0 || selectedScreen >= screens.length ) return;
-	
-	var scr = screens[selectedScreen];
-	var ctrl = getTopControl(scr, px, py);
-	
-	if( ctrl == null ) {
-		showProps(scr);
-		selectedControl = null;
-	} else {
-		cvs.onmousemove = function(me) {
-			var px2 = Math.floor( ( me.pageX - cvsRect.left ) / scaleK );
-			var py2 = Math.floor( ( me.pageY - cvsRect.top ) / scaleK );
-			var dx = parseInt(px2) - parseInt(px);	var dy = parseInt(py2) - parseInt(py);
-
-			ctrl.tryCursorModify( parseInt(dx), parseInt(dy) );
-			refreshCurrentScreen();
-		};
-		
-		cvs.onmouseup = function() {
-			cvs.onmousemove = null;
-			cvs.onmouseup = null;
-			showProps(scr, ctrl);
-		};
-		
-		selectedControl = ctrl;
-	}
-}
-
-
-
-
-
-
-function generateCode() {
-	var strCode = "";
-	
-	var className = document.getElementById("className").value;
-	for( var i = 0; i < screens.length; i++ ) {
-		strCode += screens[i].generateCode(className);
-	}
-	
-	// downloadContent(strCode, "project.c");
-	var codePanel = document.getElementById("txtCode");
-	codePanel.textContent = strCode;
-	showCode();
-}
-
-
 
 
 
@@ -310,5 +256,12 @@ function sendControlToBack() {
 
 	loadScreensList();
 }
+
+function getCursorPositionFromEvent(event) {
+	return {x: event.pageX, y: event.pageY};
+}
+
+
+
 
 

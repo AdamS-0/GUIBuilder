@@ -1,0 +1,46 @@
+btnAlignLeft, btnAlignCenter, btnAlignRight, btnAlignTop, btnAlignMiddle, btnAlignBottom {
+	display: block;
+	display: inline-block;
+	background-size: contain;
+	border: 0;
+}
+
+btnAlignLeft:hover, btnAlignCenter:hover, btnAlignRight:hover, btnAlignTop:hover, btnAlignMiddle:hover, btnAlignBottom:hover {
+	border: 2px solid;
+}
+
+btnAlignLeft, btnAlignCenter, btnAlignRight {
+	width: 19px;
+	height: 20px;
+}
+
+btnAlignTop, btnAlignMiddle, btnAlignBottom {
+	width: 20px;
+	height: 19px;
+}
+
+
+
+btnAlignLeft {
+	background-image: url("../img/align/align_hor_left.jpg");
+}
+
+btnAlignCenter {
+	background-image: url("../img/align/align_hor_center.jpg");
+}
+
+btnAlignRight {
+	background-image: url("../img/align/align_hor_right.jpg");
+}
+
+btnAlignTop {
+	background-image: url("../img/align/align_vert_top.jpg");
+}
+
+btnAlignMiddle {
+	background-image: url("../img/align/align_vert_middle.jpg");
+}
+
+btnAlignBottom {
+	background-image: url("../img/align/align_vert_bottom.jpg");
+}

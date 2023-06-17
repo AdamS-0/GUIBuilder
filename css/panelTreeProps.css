@@ -1,0 +1,32 @@
+#tree, #properties {
+	height: calc(50% - 0.5px);
+}
+
+#tree{
+	display: block;
+	width: 100%;
+	border: solid 1px;
+	margin-bottom: 3px;
+}
+
+#treeScreens{
+	overflow: auto;
+	width: 100%;
+	height: calc(100% - 22px);
+}
+
+#properties{
+	display: block;
+	width: 100%;
+	border: solid 1px;
+}
+
+#propSender {
+	display: inline-block;
+}
+
+#tabProperties{
+	overflow: auto;
+	width: 100%;
+	height: calc(100% - 20px);
+}
