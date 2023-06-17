@@ -21,12 +21,13 @@ Default prefix is set to tft, but can be changed in Settings > Display instance.
 
 Generating C/C++ code:
 Code can be generated at every step of GUI designing, by choosing option Generate > C/C++ Code.
-Note: Make sure to enable checkbox for every Screen, which should be displayed on one color display (like SSD1306)!
+Note: Make sure to enable checkbox for every Screen, which should be displayed on single color display (like SSD1306)!
 
 ## Changes
 17 June 2023:
 * Fixed UI
 * Added context menus
+* Added bounding boxes for selected controls
 * Added multiple selection
 * Added horizontal and vertical alignments
 * Code generator update (C/C++)
