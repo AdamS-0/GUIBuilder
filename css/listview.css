@@ -1,7 +1,7 @@
 
 listViewItem, screenItem, screenItemSelected, controlItem {
 	display: inline-block;
-	width: calc(100% - 6px);
+	width: calc(100% - 0px);
 	margin-top: 1px;
 	padding: 3px;
 	user-select: none;

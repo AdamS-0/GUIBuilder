@@ -24,8 +24,10 @@ function JSONReplacer(key,value) {
 }
 
 function proj_save() {
+	var elProjectName = document.getElementById("projectName");
+	if( elProjectName.value.length <= 0) elProjectName.value = "project";
 	var projectJSON = JSON.stringify(screens, JSONReplacer);
-	downloadContent(projectJSON, "project.guibldr");
+	downloadContent(projectJSON, elProjectName.value + ".guibldr");
 }
 
 

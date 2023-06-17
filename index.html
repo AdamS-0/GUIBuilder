@@ -4,12 +4,33 @@
 	<meta charset="UTF-8">
 	<title>GUIBuilder</title>
 	<script src="./js/script.js" defer></script>
-	<script src="./js/controls.js" defer></script>
+	<script src="./js/canvasHandler.js" defer></script>
 	<script src="./js/graphix.js" defer></script>
 	<script src="./js/projectScripts.js" defer></script>
 	<script src="./js/font.js" defer></script>
+	<script src="./js/align.js" defer></script>
+	<script src="./js/contextMenu.js" defer></script>
+	<script src="./js/codeGenerator.js" defer></script>
+
+	<script src="./js/controls.js" defer></script>
+	<script src="./Controls/Screen.js" defer></script>
+	<script src="./Controls/Control.js" defer></script>
+	<script src="./Controls/Circle.js" defer></script>
+	<script src="./Controls/Label.js" defer></script>
+	<script src="./Controls/Line.js" defer></script>
+	<script src="./Controls/Rectangle.js" defer></script>
+	<script src="./Controls/ProgressBar.js" defer></script>
+	
+	
 	<link rel="stylesheet" href="./css/panel.css">
+	<link rel="stylesheet" href="./css/panelToolbox.css">
+	<link rel="stylesheet" href="./css/panelMiddle.css">
+	<link rel="stylesheet" href="./css/panelTreeProps.css">
+	<link rel="stylesheet" href="./css/dropdown.css">
+	<link rel="stylesheet" href="./css/flatBtn.css">
+	<link rel="stylesheet" href="./css/contextMenu.css">
 	<link rel="stylesheet" href="./css/listview.css">
+	<link rel="stylesheet" href="./css/align.css">
 </head>
 <body onLoad="onload()">
 	
@@ -24,7 +45,10 @@
 				<input id="projectIn" type="file" onchange="loadProject(this)" value="" style="position: fixed; opacity: 100%; width: 0px;"/>
 				</dropdownOption>
 				<dropdownOption onclick="proj_save()">Save</dropdownOption>
-				
+				<dropdownOption>
+					<label for="projectName">Name:</label>
+					<input id="projectName" type="text" value="project" size="10" pattern="[a-zA-Z][a-zA-Z0-9-_.]"></input>
+				</dropdownOption>
 			</div>
 		</div>
 		
@@ -38,6 +62,10 @@
 				<dropdownOption>
 				<label for="className">Display instance:</label>
 				<input id="className" type="text" value="tft" size="5"></input>
+				</dropdownOption>
+				<dropdownOption>
+					<input id="showBoundingBoxes" type="checkbox" checked></input>
+					<label for="showBoundingBoxes">Show bounding boxes</label>
 				</dropdownOption>
 			</div>
 		</div>
@@ -60,14 +88,16 @@
 		
 		
 	</div>
-	<div id="main">
-		<div id="toolbox">
+
+
+	<div id="panelMain">
+		<div id="panelToolbox">
 			<div class="label">ToolBox</div>
 			
 			
 		</div>
 		
-		<div id="tree_props">
+		<div id="panelTreeProps">
 			<div id="tree">
 				<div class="label">Tree
 				<flatBtn onclick="addNewScreen();">Scr +</flatBtn>
@@ -79,26 +109,52 @@
 				</div>
 			</div>
 			<div id="properties">
-				<div class="label">Properties<span id="propSender"></span></div>
+				<div class="label" id="propHeader">Properties<span id="propSender"></span></div>
 				<div class="panelParent" id="tabProperties">
 					
 				</div>
 			</div>
 		</div>
 		
-		<div style="height: 100%;">
-			<div style="background: white;">
+		<div id="panelMiddle">
+			<div>
 				<flatBtnTab id="btnTabEditor" onclick="showEditor();">Editor</flatBtnTab>
 				<flatBtnTab id="btnTabCode" onclick="showCode();">Code</flatBtnTab>
 			</div>
 			<div id="editor_code">
 				<div id="editor">
-					<canvas id="canvas" width="128" height="64" tabindex="1" onmousedown="canvasDown(event)" ondrop="drop(event)" ondragover="allowDrop(event)" onkeydown="UI_onkeydown(event)"></canvas>
+					<canvas id="canvas" width="128" height="64" tabindex="1" onmousedown="canvasDown(event)" onmouseup="canvasUp(event)" onmousemove="canvasMouseMove(event)" ondrop="drop(event)" ondragover="allowDrop(event)" oncontextmenu="showContextMenuEditor(event)" onkeydown="UI_onkeydown(event)" onkeyup="UI_onkeyup(event)"></canvas>
 				</div>
 
 				<textarea id="txtCode"></textarea>
 			</div>
 		</div>
 	</div>
+
+
+	<div class="hide" id="contextMenuEditor" onmouseleave="hideContextMenu(this)">
+		<ul>
+			<dropdownOption onclick="bringControlToFront()">Bring to front</dropdownOption>
+			<dropdownOption onclick="sendControlToBack()">Send to back</dropdownOption>
+			<dropdownOption onclick="deleteSelectedControls()">Delete</dropdownOption>
+			<dropdownOption>
+				<btnAlignLeft onclick="selCtrlsSetHor('left')"></btnAlignLeft>
+				<btnAlignCenter onclick="selCtrlsSetHor('center')"></btnAlignCenter>
+				<btnAlignRight onclick="selCtrlsSetHor('right')"></btnAlignRight>
+				<btnAlignTop onclick="selCtrlsSetVert('top')"></btnAlignTop>
+				<btnAlignMiddle onclick="selCtrlsSetVert('middle')"></btnAlignMiddle>
+				<btnAlignBottom onclick="selCtrlsSetVert('bottom')"></btnAlignBottom>
+			</dropdownOption>
+		</ul>
+	</div>
+
+	<div class="hide" id="contextMenuTreeScreens" onmouseleave="hideContextMenu(this)">
+		<ul>
+			<dropdownOption onclick="addNewScreen();">+ Add new screen</dropdownOption>
+			<dropdownOption onclick="deleteScreen();">- Remove screen</dropdownOption>
+			<dropdownOption onclick="duplicateScreen();">Duplicate screen</dropdownOption>
+		</ul>
+	</div>
+
 </body>
 </html>
