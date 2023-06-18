@@ -13,6 +13,11 @@ class Circle extends Control {
 		super(name, x, y);
 		this.R = r;
 	}
+
+	forceParser() {
+		super.forceParser();
+		this.R = parseInt(this.R);
+	}
 	
 	showProperties(panel, tab) {
 		tab = super.showProperties(panel, tab);
@@ -28,23 +33,27 @@ class Circle extends Control {
 	}
 
 	draw(ctx) {
+		this.forceParser();
 		if(this.Fill)	fillCircle(this.X, this.Y, this.R, this.FillColorRGBA);
 		drawCircle(this.X, this.Y, this.R, this.ColorRGBA);
 	}
 
 
 	getBoundingBox() {
+		this.forceParser();
 		var x = this.X - this.R, y = this.Y - this.R;
 		var w = parseInt(2*this.R) + 1, h = parseInt(2*this.R) + 1;
 		return {x, y, w, h};
 	}
 	
 	drawBounding(ctx) {
+		this.forceParser();
 		drawBoundingBox(ctx, this.getBoundingBox());
 	}
 
 	
 	saveLastSize(x, y) {
+		this.forceParser();
 		if(typeof x === "undefined") x = this.lastSize.cX;
 		if(typeof y === "undefined") y = this.lastSize.cY;
 		
@@ -67,6 +76,7 @@ class Circle extends Control {
 	}
 
 	tryCursorModify( dx, dy ) {
+		this.forceParser();
 		dx = parseInt(dx);	dy = parseInt(dy);
 		if( this.selectedBorder == 1 ) {
 			this.R = parseInt( Math.sqrt( getRsqr(this.X, this.Y, parseInt(this.lastSize.cX) + parseInt(dx), parseInt(this.lastSize.cY) + parseInt(dy)) ) );
@@ -75,17 +85,11 @@ class Circle extends Control {
 		}
 	}
 	
-	alignLeft(x) { this.X = parseInt(x) + parseInt(this.R); }
-	alignCenter(x) { this.X = parseInt(x); }
-	alignRight(x) { this.X = parseInt(x) - parseInt(this.R); }
-
-	alignTop(y) { this.Y = parseInt(y) + parseInt(this.R); }
-	alignMiddle(y) { this.Y = parseInt(y); }
-	alignBottom(y) { this.Y = parseInt(y) - parseInt(this.R); }
 
 
 	generateCode(className = "tft", oneColor = 0) {
 		this.updateRGBcolor();
+		this.forceParser();
 		var strCode = "";
 		
 		var colorF = "1";

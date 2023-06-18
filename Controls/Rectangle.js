@@ -22,6 +22,13 @@ class Rectangle extends Control {
 		this.R = r;
 	}
 	
+	forceParser() {
+		super.forceParser();
+		this.Width = parseInt(this.Width);
+		this.Height = parseInt(this.Height);
+		this.R = parseInt(this.R);
+	}
+
 	showProperties(panel, tab) {
 		tab = super.showProperties(panel, tab);
 		createRow(this, tab, "number", "Width", this.Width);
@@ -39,6 +46,7 @@ class Rectangle extends Control {
 	}
 	
 	draw(ctx) {
+		this.forceParser();
 		if(this.Round){
 			if(this.Fill)	fillRoundRect(this.X, this.Y, this.Width, this.Height, this.R, this.FillColorRGBA);
 			drawRoundRect(this.X, this.Y, this.Width, this.Height, this.R, this.ColorRGBA);
@@ -49,12 +57,14 @@ class Rectangle extends Control {
 	}
 	
 	getBoundingBox() {
+		this.forceParser();
 		var x = this.X, y = this.Y;
 		var w = this.Width, h = this.Height;
 		return {x, y, w, h};
 	}
 	
 	drawBounding(ctx) {
+		this.forceParser();
 		drawBoundingBox(ctx, this.getBoundingBox());
 		drawModifier(ctx, this.X + 0.5, this.Y + 0.5);
 		drawModifier(ctx, this.X + this.Width - 0.5, this.Y + 0.5);
@@ -63,6 +73,7 @@ class Rectangle extends Control {
 	}
 	
 	saveLastSize() {
+		this.forceParser();
 		this.lastSize = { X: Number(this.X), Y: Number(this.Y), Width: Number(this.Width), Height: Number(this.Height) };
 	}
 
@@ -92,6 +103,7 @@ class Rectangle extends Control {
 	}
 
 	tryCursorModify( dx, dy ) {
+		this.forceParser();
 		dx = parseInt(dx);	dy = parseInt(dy);
 
 		var x0 = parseInt( this.lastSize.X ); var x1 = x0 + parseInt( this.lastSize.Width );
@@ -110,16 +122,10 @@ class Rectangle extends Control {
 		this.Height = Math.abs( y0 - y1 );
 	}
 
-
-	alignCenter(x) { this.X = x - this.Width/2; }
-	alignRight(x) { this.X = x - this.Width; }
-
-	alignMiddle(y) { this.Y = y - this.Height/2; }
-	alignBottom(y) { this.Y = y - this.Height; }
-
 	
 	generateCode(className = "tft", oneColor = 0) {
 		this.updateRGBcolor();
+		this.forceParser();
 		var strCode = "";
 		
 		var colorF = "1", colorFill = "0";

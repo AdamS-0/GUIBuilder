@@ -11,6 +11,12 @@ class Line extends Control {
 		this.EndY = endy;
 	}
 	
+	forceParser() {
+		super.forceParser();
+		this.EndX = parseInt(this.EndX);
+		this.EndY = parseInt(this.EndY);
+	}
+
 	showProperties(panel, tab) {
 		tab = super.showProperties(panel, tab);
 		createRow(this, tab, "number", "EndX", this.EndX);
@@ -19,10 +25,12 @@ class Line extends Control {
 	}
 	
 	draw(ctx) {
+		this.forceParser();
 		drawLine(this.X, this.Y, this.EndX, this.EndY, this.ColorRGBA);
 	}
 	
 	getBoundingBox() {
+		this.forceParser();
 		var x = Math.min(this.X, this.EndX), y = Math.min(this.Y, this.EndY);
 		var endx = Math.max(this.X, this.EndX) + 1, endy = Math.max(this.Y, this.EndY) + 1;
 		var w = endx - x, h = endy - y;
@@ -30,12 +38,14 @@ class Line extends Control {
 	}
 	
 	drawBounding(ctx) {
+		this.forceParser();
 		drawBoundingBox(ctx, this.getBoundingBox());
 		drawModifier(ctx, this.X + 0.5, this.Y + 0.5);
 		drawModifier(ctx, this.EndX + 0.5, this.EndY + 0.5);
 	}
 
 	saveLastSize() {
+		this.forceParser();
 		this.lastSize = { X: Number(this.X), Y: Number(this.Y), EndX: Number(this.EndX), EndY: Number(this.EndY) };
 	}
 
@@ -74,6 +84,7 @@ class Line extends Control {
 	}
 
 	tryCursorModify( dx, dy ) {
+		this.forceParser();
 		dx = parseInt(dx);	dy = parseInt(dy);
 		if( this.selectedVert == 1 ) {
 			this.X = this.lastSize.X + dx;	this.Y = this.lastSize.Y + dy;
@@ -86,12 +97,14 @@ class Line extends Control {
 	}
 
 	tryCursorMove( dx, dy ) {
+		this.forceParser();
 		dx = parseInt(dx);	dy = parseInt(dy);
 		this.X = this.lastSize.X + dx;	this.Y = this.lastSize.Y + dy;
 		this.EndX = this.lastSize.EndX + dx;	this.EndY = this.lastSize.EndY + dy;
 	}
 
 	moveBy(dx, dy) {
+		this.forceParser();
 		dx = parseInt(dx);	dy = parseInt(dy);
 		this.X = parseInt(this.X) + dx;	this.Y = parseInt(this.Y) + dy;
 		this.EndX = parseInt(this.EndX) + dx;	this.EndY = parseInt(this.EndY) + dy;
@@ -99,51 +112,9 @@ class Line extends Control {
 	}
 
 
-	alignLeft(x) {
-		var bbox = this.getBoundingBox();
-		var dx = x - bbox.x;
-		this.X += parseFloat(dx);
-		this.EndX += parseFloat(dx);
-	}
-
-	alignMiddle(x) {
-		var bbox = this.getBoundingBox();
-		var dx = x - ( parseFloat(bbox.x) + parseFloat(bbox.w/2));
-		this.X += parseFloat(dx);
-		this.EndX += parseFloat(dx);
-	}
-
-	alignRight(x) {
-		var bbox = this.getBoundingBox();
-		var dx = x - ( parseFloat(bbox.x) + parseFloat(bbox.w) );
-		this.X += parseFloat(dx);
-		this.EndX += parseFloat(dx);
-	}
-
-	alignTop(y) {
-		var bbox = this.getBoundingBox();
-		var dy = y - bbox.y;
-		this.Y += parseFloat(dy);
-		this.EndY += parseFloat(dy);
-	}
-
-	alignCenter(y) {
-		var bbox = this.getBoundingBox();
-		var dy = y - ( parseFloat(bbox.y) + parseFloat(bbox.h/2));
-		this.Y += parseFloat(dy);
-		this.EndY += parseFloat(dy);
-	}
-
-	alignBottom(y) {
-		var bbox = this.getBoundingBox();
-		var dy = y - ( parseFloat(bbox.y) + parseFloat(bbox.h) );
-		this.Y += parseFloat(dy);
-		this.EndY += parseFloat(dy);
-	}
-
-
 	generateCode(className = "tft", oneColor = 0) {
 		this.updateRGBcolor();
+		this.forceParser();
 		var strCode = "";
 		
 		var colorF = "1";

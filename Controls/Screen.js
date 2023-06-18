@@ -17,6 +17,11 @@ class Screen{
 		
 	}
 	
+	forceParser() {
+		this.Width = parseInt(this.Width);
+		this.Height = parseInt(this.Height);
+	}
+
 	showProperties(panel, tab) {
 		panel.innerHTML = "";
 		createRow(this, tab, "text", "Name", this.Name);
@@ -47,6 +52,12 @@ class Screen{
 		
 		for( var i = 0; i < this.Controls.length; i++ )
 			this.Controls[i].draw(ctx);
+	}
+
+	getBoundingBox() {
+		this.forceParser();
+		var w = this.Width, h = this.Height;
+		return {x:0, y:0, w, h};
 	}
 
 	drawBounding(ctx) {

@@ -18,6 +18,9 @@ class ProgressBar extends Rectangle {
 		this.R = r;
 	}
 	
+	forceParser() {
+		super.forceParser();
+	}
 
 	updateRGBcolor() {
 		super.updateRGBcolor();
@@ -37,6 +40,7 @@ class ProgressBar extends Rectangle {
 	}
 	
 	draw(ctx) {
+		this.forceParser();
 		var fillValue = 0.6;
 
 		var x = Number(this.X) + 1, y = Number(this.Y) + 1, w = Number(this.Width) - 2, h = Number(this.Height) - 2;
@@ -61,12 +65,14 @@ class ProgressBar extends Rectangle {
 	}
 	
 	getBoundingBox() {
+		this.forceParser();
 		var x = this.X, y = this.Y;
 		var w = this.Width, h = this.Height;
 		return {x, y, w, h};
 	}
 	
 	drawBounding(ctx) {
+		this.forceParser();
 		drawBoundingBox(ctx, this.getBoundingBox());
 		drawModifier(ctx, this.X + 0.5, this.Y + 0.5);
 		drawModifier(ctx, this.X + this.Width - 0.5, this.Y + 0.5);
@@ -77,6 +83,7 @@ class ProgressBar extends Rectangle {
 	
 	generateCode(className = "tft", oneColor = 0) {
 		this.updateRGBcolor();
+		this.forceParser();
 		var strCode = "";
 		
 		var colorF = "1", colorFill = "1", colorBorder = "0";
@@ -119,6 +126,7 @@ class ProgressBar extends Rectangle {
 
 	generateCodeUpdater(className = "tft", oneColor = 0) {
 		this.updateRGBcolor();
+		this.forceParser();
 		this.setAutoFunctionName();
 		var strCode = "";
 		

@@ -13,6 +13,11 @@ class Label extends Control {
 		this.TextSize = textSize;
 	}
 	
+	forceParser() {
+		super.forceParser();
+		this.TextSize = parseInt(this.TextSize);
+	}
+
 	showProperties(panel, tab) {
 		this.setAutoFunctionName();
 		this.TextSize = parseInt(this.TextSize);
@@ -31,23 +36,27 @@ class Label extends Control {
 	}
 	
 	draw(ctx) {
+		this.forceParser();
 		setFontSize(this.TextSize);
 		setCursor(this.X, this.Y);
 		printString(this.Text, this.ColorRGBA, this.BackgroundRGBA);
 	}
 
 	getBoundingBox() {
+		this.forceParser();
 		var x = this.X, y = this.Y;
 		var txtLen = this.Text.length;
-		var w = txtLen * 6 * this.TextSize, h = 8;
+		var w = txtLen * 6 * this.TextSize, h = 8 * this.TextSize;
 		return {x, y, w, h};
 	}
 	
 	drawBounding(ctx) {
+		this.forceParser();
 		drawBoundingBox(ctx, this.getBoundingBox());
 	}
 	
 	saveLastSize() {
+		this.forceParser();
 		this.lastSize = { X: Number(this.X), Y: Number(this.Y) };
 	}
 
@@ -59,28 +68,10 @@ class Label extends Control {
 	}
 	
 
-	alignCenter(x) {
-		var bbox = this.getBoundingBox();
-		this.X = x - bbox.w/2;
-	}
-	alignRight(x) {
-		var bbox = this.getBoundingBox();
-		this.X = x - bbox.w;
-	}
-
-	alignMiddle(y) {
-		var bbox = this.getBoundingBox();
-		this.Y = y - bbox.h/2;
-	}
-	
-	alignBottom(y) {
-		var bbox = this.getBoundingBox();
-		this.Y = y - bbox.h;
-	}
-
 	
 	generateCode(className = "tft", oneColor = 0) {
 		this.updateRGBcolor();
+		this.forceParser();
 		var strCode = "";
 		
 		var colorF = "1";	var colorBg = "0";
@@ -103,6 +94,7 @@ class Label extends Control {
 
 	generateCodeUpdater(className = "tft", oneColor = 0) {
 		this.updateRGBcolor();
+		this.forceParser();
 		this.setAutoFunctionName();
 		var strCode = "";
 		

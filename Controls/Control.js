@@ -27,6 +27,11 @@ class Control {
 		}
 	}
 
+	forceParser() {
+		this.X = parseInt(this.X);
+		this.Y = parseInt(this.Y);
+	}
+
 	showProperties(panel, tab) {
 		panel.innerHTML = "";
 		createRow(this, tab, "text", "Name", this.Name);
@@ -43,7 +48,10 @@ class Control {
 	
 	draw(ctx) {}
 
-	getBoundingBox() { return {x: 0, y: 0, w: 0, h: 0}; }
+	getBoundingBox() {
+		this.forceParser();
+		return {x: 0, y: 0, w: 0, h: 0};
+	}
 	
 	drawBounding(ctx) {
 		drawBoundingBox(ctx, this.X, this.Y, 1, 1);
@@ -78,14 +86,37 @@ class Control {
 		this.requiredRefresh();
 	}
 
-	alignLeft(x) { this.X = x; }
-	alignCenter(x) { this.X = x; }
-	alignRight(x) { this.X = x; }
 
-	alignTop(y) { this.Y = y; }
-	alignMiddle(y) { this.Y = y; }
-	alignBottom(y) { this.Y = y; }
-	
+
+
+	alignSuper(option, destX = null, destY = null) {
+		var bbox = this.getBoundingBox();
+		var dy = 0, dx = 0;
+
+		if( Number.isInteger( destX ) ) {
+			if( ( option & Align.HLeft ) || ( option & Align.HRightOut ) )
+				dx = destX - bbox.x;
+			else if( option & Align.HCenter )
+				dx = destX - bbox.x - parseInt(bbox.w/2);
+			else if( ( option & Align.HRight ) || ( option & Align.HLeftOut ) )
+				dx = destX - bbox.x - parseInt(bbox.w);
+		}
+
+		if( Number.isInteger( destY ) ) {
+			if( ( option & Align.VTop ) || ( option & Align.VBottomOut ) )
+				dy = destY - bbox.y;
+			else if( option & Align.VMiddle )
+				dy = destY - bbox.y - parseInt(bbox.h/2);
+			else if( ( option & Align.VBottom ) || ( option & Align.VTopOut ) )
+				dy = destY - bbox.y - parseInt(bbox.h);
+		}
+
+		this.moveBy(dx, dy);
+	}
+
+
+
+
 	generateCode(className = "tft", oneColor = 0) {
 		return "";
 	}

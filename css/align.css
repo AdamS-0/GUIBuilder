@@ -1,25 +1,29 @@
-btnAlignLeft, btnAlignCenter, btnAlignRight, btnAlignTop, btnAlignMiddle, btnAlignBottom {
+btnAlignLeftOut, btnAlignLeft, btnAlignCenter, btnAlignRight, btnAlignRightOut, btnAlignTopOut, btnAlignTop, btnAlignMiddle, btnAlignBottom, btnAlignBottomOut {
 	display: block;
 	display: inline-block;
 	background-size: contain;
 	border: 0;
 }
 
-btnAlignLeft:hover, btnAlignCenter:hover, btnAlignRight:hover, btnAlignTop:hover, btnAlignMiddle:hover, btnAlignBottom:hover {
+btnAlignLeftOut:hover, btnAlignLeft:hover, btnAlignCenter:hover, btnAlignRight:hover, btnAlignRightOut:hover, btnAlignTopOut:hover, btnAlignTop:hover, btnAlignMiddle:hover, btnAlignBottom:hover, btnAlignBottomOut:hover {
 	border: 2px solid;
 }
 
-btnAlignLeft, btnAlignCenter, btnAlignRight {
+btnAlignLeftOut, btnAlignLeft, btnAlignCenter, btnAlignRight, btnAlignRightOut {
 	width: 19px;
 	height: 20px;
 }
 
-btnAlignTop, btnAlignMiddle, btnAlignBottom {
+btnAlignTopOut, btnAlignTop, btnAlignMiddle, btnAlignBottom, btnAlignBottomOut {
 	width: 20px;
 	height: 19px;
 }
 
 
+
+btnAlignLeftOut {
+	background-image: url("../img/align/align_hor_left_out.jpg");
+}
 
 btnAlignLeft {
 	background-image: url("../img/align/align_hor_left.jpg");
@@ -33,6 +37,16 @@ btnAlignRight {
 	background-image: url("../img/align/align_hor_right.jpg");
 }
 
+btnAlignRightOut {
+	background-image: url("../img/align/align_hor_right_out.jpg");
+}
+
+
+
+btnAlignTopOut {
+	background-image: url("../img/align/align_vert_top_out.jpg");
+}
+
 btnAlignTop {
 	background-image: url("../img/align/align_vert_top.jpg");
 }
@@ -44,3 +58,9 @@ btnAlignMiddle {
 btnAlignBottom {
 	background-image: url("../img/align/align_vert_bottom.jpg");
 }
+
+btnAlignBottomOut {
+	background-image: url("../img/align/align_vert_bottom_out.jpg");
+}
+
+
