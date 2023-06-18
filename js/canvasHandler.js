@@ -110,8 +110,9 @@ function canvasUp(e) {
 
 	if(deltaMove.x == 0 && deltaMove.y == 0) { // without movement
 		refreshCurrentScreen();
-		return;
 	}
+
+	showProps(topInfo.screen, topInfo.control);
 }
 
 

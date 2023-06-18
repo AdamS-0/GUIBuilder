@@ -138,12 +138,18 @@
 			<dropdownOption onclick="sendControlToBack()">Send to back</dropdownOption>
 			<dropdownOption onclick="deleteSelectedControls()">Delete</dropdownOption>
 			<dropdownOption>
-				<btnAlignLeft onclick="selCtrlsSetHor('left')"></btnAlignLeft>
-				<btnAlignCenter onclick="selCtrlsSetHor('center')"></btnAlignCenter>
-				<btnAlignRight onclick="selCtrlsSetHor('right')"></btnAlignRight>
-				<btnAlignTop onclick="selCtrlsSetVert('top')"></btnAlignTop>
-				<btnAlignMiddle onclick="selCtrlsSetVert('middle')"></btnAlignMiddle>
-				<btnAlignBottom onclick="selCtrlsSetVert('bottom')"></btnAlignBottom>
+				<btnAlignLeftOut onclick="selCtrlsSetAlign(Align.HLeftOut)"></btnAlignLeftOut>
+				<btnAlignLeft onclick="selCtrlsSetAlign(Align.HLeft)"></btnAlignLeft>
+				<btnAlignCenter onclick="selCtrlsSetAlign(Align.HCenter)"></btnAlignCenter>
+				<btnAlignRight onclick="selCtrlsSetAlign(Align.HRight)"></btnAlignRight>
+				<btnAlignRightOut onclick="selCtrlsSetAlign(Align.HRightOut)"></btnAlignRightOut>
+			</dropdownOption>
+			<dropdownOption>
+				<btnAlignTopOut onclick="selCtrlsSetAlign(Align.VTopOut)"></btnAlignTopOut>
+				<btnAlignTop onclick="selCtrlsSetAlign(Align.VTop)"></btnAlignTop>
+				<btnAlignMiddle onclick="selCtrlsSetAlign(Align.VMiddle)"></btnAlignMiddle>
+				<btnAlignBottom onclick="selCtrlsSetAlign(Align.VBottom)"></btnAlignBottom>
+				<btnAlignBottomOut onclick="selCtrlsSetAlign(Align.VBottomOut)"></btnAlignBottomOut>
 			</dropdownOption>
 		</ul>
 	</div>
