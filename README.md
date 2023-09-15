@@ -26,15 +26,16 @@ Note: Make sure to enable checkbox for every Screen, which should be displayed o
 ## Changes
 06 August 2023:
 * Fixed displaying 8bit ASCII font
+* Fixed Gauge refreshing
 
 14 July 2023:
 * Added new control: Gauge
-* Added new control: Triangle
-* Fixed: Line drag modification
+* Added new control: Triangle - border mode only!
+* Fixed Line drag modification
 
 28 June 2023:
 * Added two color models: RGB565 and one color for Bitmap
-* Feature: COntrols duplication available in context menu 
+* Feature: Controls duplication available in context menu 
 
 27 June 2023:
 * Modified tab control
