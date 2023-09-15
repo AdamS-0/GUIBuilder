@@ -45,7 +45,9 @@ class Label extends Control {
 	getBoundingBox() {
 		this.forceParser();
 		var x = this.X, y = this.Y;
-		var txtLen = this.Text.length;
+		var txt = this.Text;
+		txt = txt.replace(/\\x[0-9a-fA-F][0-9a-fA-F]/g, ' ');
+		var txtLen = txt.length;
 		var w = txtLen * 6 * this.TextSize, h = 8 * this.TextSize;
 		return {x, y, w, h};
 	}

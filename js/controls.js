@@ -144,3 +144,32 @@ const Directions = {
 
 
 
+
+function checkCursorOnBoundingModifier(x, y, x0, y0, R = 2) {
+	var R0 = Math.abs( getRsqr(x, y, x0, y0) );
+	
+	if (R0 < R) return true;
+
+	return false;
+}
+
+
+function checkCursorOnLine(x, y, x0, y0, x1, y1, R = 2) {
+	var dX = x1 - x0;	var dY = y1 - y0; // delta XY of line
+	var cdX = x - x0;	var cdY = y - y0; // delta XY of cursor
+	
+	var R0 = Math.abs( getRsqr(x, y, x0, y0) );
+	R0 = Math.abs( Math.sqrt( R0 ) ); // radius: cursor <-> (X, Y)
+	var RLine = Math.abs( Math.sqrt( getRsqr(x0, y0, x1, y1) ) ); // line length
+	var alphaL = Math.atan2( dY, dX ); // alpha line
+	var alphaC = Math.atan2( cdY, cdX ); // alpha cursor
+	var alpha = -alphaL + alphaC;
+	var c2x = R0 * Math.cos( alpha );
+	
+	if( !isBetween(c2x, 0, RLine) ) return Number.MAX_VALUE;
+	
+	var c2y = R0 * Math.sin( alpha );
+	return Math.abs( c2y );
+	
+	// return false;
+}

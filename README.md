@@ -24,6 +24,24 @@ Code can be generated at every step of GUI designing, by choosing option Generat
 Note: Make sure to enable checkbox for every Screen, which should be displayed on single color display (like SSD1306)!
 
 ## Changes
+06 August 2023:
+* Fixed displaying 8bit ASCII font
+
+14 July 2023:
+* Added new control: Gauge
+* Added new control: Triangle
+* Fixed: Line drag modification
+
+28 June 2023:
+* Added two color models: RGB565 and one color for Bitmap
+* Feature: COntrols duplication available in context menu 
+
+27 June 2023:
+* Modified tab control
+* Added Resources tab
+* Feature: adding images to project in Resource tab
+* Added new control: Bitmap
+
 18 June 2023:
 * Removed old robust alignment system
 * Added universal alignment system

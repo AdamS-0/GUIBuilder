@@ -11,16 +11,19 @@
 	<script src="./js/align.js" defer></script>
 	<script src="./js/contextMenu.js" defer></script>
 	<script src="./js/codeGenerator.js" defer></script>
+	<script src="./js/resources.js" defer></script>
 
 	<script src="./js/controls.js" defer></script>
 	<script src="./Controls/Screen.js" defer></script>
 	<script src="./Controls/Control.js" defer></script>
+	<script src="./Controls/Bitmap.js" defer></script>
 	<script src="./Controls/Circle.js" defer></script>
 	<script src="./Controls/Label.js" defer></script>
 	<script src="./Controls/Line.js" defer></script>
 	<script src="./Controls/Rectangle.js" defer></script>
 	<script src="./Controls/ProgressBar.js" defer></script>
-	
+	<script src="./Controls/Gauge.js" defer></script>
+	<script src="./Controls/Triangle.js" defer></script>
 	
 	<link rel="stylesheet" href="./css/panel.css">
 	<link rel="stylesheet" href="./css/panelToolbox.css">
@@ -118,25 +121,34 @@
 		
 		<div id="panelMiddle">
 			<div>
-				<flatBtnTab id="btnTabEditor" onclick="showEditor();">Editor</flatBtnTab>
-				<flatBtnTab id="btnTabCode" onclick="showCode();">Code</flatBtnTab>
+				<flatBtnTab id="btnTabEditor" onclick="showTabEditor();">Editor</flatBtnTab>
+				<flatBtnTab id="btnTabCode" onclick="showTabCode();">Code</flatBtnTab>
+				<flatBtnTab id="btnTabResources" onclick="showTabResources();">Resources</flatBtnTab>
 			</div>
 			<div id="editor_code">
-				<div id="editor">
+				<div id="pEditor">
 					<canvas id="canvas" width="128" height="64" tabindex="1" onmousedown="canvasDown(event)" onmouseup="canvasUp(event)" onmousemove="canvasMouseMove(event)" ondrop="drop(event)" ondragover="allowDrop(event)" oncontextmenu="showContextMenuEditor(event)" onkeydown="UI_onkeydown(event)" onkeyup="UI_onkeyup(event)"></canvas>
 				</div>
 
-				<textarea id="txtCode"></textarea>
+				<textarea id="pCode">// output code</textarea>
+				
+				<div id="pResources"></div>
+
 			</div>
 		</div>
 	</div>
 
 
+
+	<input id="imageIn" type="file" onchange="loadImage(this)" value="" style="position: fixed; opacity: 100%; width: 0px;"/>
+
 	<div class="hide" id="contextMenuEditor" onmouseleave="hideContextMenu(this)">
 		<ul>
-			<dropdownOption onclick="bringControlToFront()">Bring to front</dropdownOption>
-			<dropdownOption onclick="sendControlToBack()">Send to back</dropdownOption>
-			<dropdownOption onclick="deleteSelectedControls()">Delete</dropdownOption>
+			<dropdownOption onclick="copyControl(); hideContextMenu(contextMenuEditor);">Copy control</dropdownOption>
+			<dropdownOption onclick="pasteControl(); hideContextMenu(contextMenuEditor);">Paste control</dropdownOption>
+			<dropdownOption onclick="bringControlToFront(); hideContextMenu(contextMenuEditor);">Bring to front</dropdownOption>
+			<dropdownOption onclick="sendControlToBack(); hideContextMenu(contextMenuEditor);">Send to back</dropdownOption>
+			<dropdownOption onclick="deleteSelectedControls(); hideContextMenu(contextMenuEditor);">Delete</dropdownOption>
 			<dropdownOption>
 				<btnAlignLeftOut onclick="selCtrlsSetAlign(Align.HLeftOut)"></btnAlignLeftOut>
 				<btnAlignLeft onclick="selCtrlsSetAlign(Align.HLeft)"></btnAlignLeft>

@@ -34,9 +34,9 @@ class Rectangle extends Control {
 		createRow(this, tab, "number", "Width", this.Width);
 		createRow(this, tab, "number", "Height", this.Height);
 		createRow(this, tab, "checkbox", "Fill", this.Fill);
-		createRow(this, tab, "color", "FillColor", this.FillColor);
+		if(this.Fill) createRow(this, tab, "color", "FillColor", this.FillColor);
 		createRow(this, tab, "checkbox", "Round", this.Round);
-		createRow(this, tab, "number", "R", this.R);
+		if(this.Round) createRow(this, tab, "number", "R", this.R);
 		return tab;
 	}
 
@@ -71,6 +71,7 @@ class Rectangle extends Control {
 		drawModifier(ctx, this.X + this.Width - 0.5, this.Y + this.Height - 0.5);
 		drawModifier(ctx, this.X + 0.5, this.Y + this.Height - 0.5);
 	}
+	
 	
 	saveLastSize() {
 		this.forceParser();

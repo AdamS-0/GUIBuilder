@@ -23,10 +23,12 @@ function JSONReplacer(key,value) {
 	else return value;
 }
 
+
 function proj_save() {
 	var elProjectName = document.getElementById("projectName");
 	if( elProjectName.value.length <= 0) elProjectName.value = "project";
-	var projectJSON = JSON.stringify(screens, JSONReplacer);
+	var toExport = [resources, screens, saveSettings()];
+	var projectJSON = JSON.stringify(toExport, JSONReplacer);
 	downloadContent(projectJSON, elProjectName.value + ".guibldr");
 }
 
@@ -52,8 +54,19 @@ function loadProject(inputElement) {
 }
 
 function loadFromJSON(jsonStr) {
-	screensIn = JSON.parse( jsonStr );
-	
+	var fromImport = JSON.parse( jsonStr );
+	var resourcesIn = fromImport[0];
+	var screensIn = fromImport[1];
+	loadSettings(fromImport[2]);
+
+	for( var i = 0; i < resourcesIn.length; i++ ) {
+		var rsc = createResourceByCopy( resourcesIn[i] )
+		while( resources.findIndex( rsIn => rsIn.Name == rsc.Name ) >= 0 ) {
+			rsc.Name += "1";
+		}
+		resources.push( rsc );
+	}
+
 	for( var i = 0; i < screensIn.length; i++ ) {
 		var scr = createScreenByCopy( screensIn[i] );
 		while( screens.findIndex( s => s.Name == scr.Name ) >= 0 ) scr.Name += "1";
@@ -89,4 +102,55 @@ function createScreenByCopy( scr2copy ) {
 	
 	
 	return scr;
+}
+
+
+
+
+function createResourceByCopy( rsc2copy ) {
+	var rsc = null;
+
+	if( rsc2copy.Type == ResourceType.String ) rsc = new RString(rsc2copy.Name, rsc2copy.Value);
+	else if( rsc2copy.Type == ResourceType.Bitmap ) rsc = new RBitmap(rsc2copy.Name, rsc2copy.Source);
+	
+	return rsc;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function saveSettings() {
+	var scaleK = document.getElementById("scale").value;
+	var className = document.getElementById("className").value;
+	var showBBoxes = document.getElementById("showBoundingBoxes").checked;
+	var projName = document.getElementById("projectName").value;
+
+	return {
+		scale : scaleK,
+		displayInstance : className,
+		showBoundingBoxes : showBBoxes,
+		projectName : projName
+	};
+}
+
+function loadSettings(settings) {
+	if( settings == null ) return;
+	document.getElementById("scale").value = settings.scale;
+	document.getElementById("className").value = settings.displayInstance;
+	document.getElementById("showBoundingBoxes").checked = settings.showBoundingBoxes;
+	document.getElementById("projectName").value = settings.projectName;
 }
