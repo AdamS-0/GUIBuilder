@@ -51,34 +51,16 @@ class Line extends Control {
 
 	checkCursorOver(x, y) {
 		this.saveLastSize();
-		var R0 = Math.abs( getRsqr(x, y, this.X, this.Y) );
-		
-		if (R0 < 2) {
-			this.selectedVert = 1;
-			return true;
-		}
-		var R1 = Math.abs( getRsqr(x, y, this.EndX, this.EndY) );
-		
-		if (R1 < 2) {
-			this.selectedVert = 2;
-			return true;
-		}
-
-		var dX = this.EndX - this.X;	var dY = this.EndY - this.Y; // delta XY of line
-		var cdX = x - this.X;	var cdY = y - this.Y; // delta XY of cursor
-		
-		R0 = Math.abs( Math.sqrt( R0 ) ); // radius: cursor <-> (X, Y)
-		var RLine = Math.abs( Math.sqrt( getRsqr(this.X, this.Y, this.EndX, this.EndY) ) ); // line length
-		var alphaL = Math.atan2( dY, dX ); // alpha line
-		var alphaC = Math.atan2( cdY, cdX ); // alpha cursor
-		var alpha = -alphaL + alphaC;
-		var c2x = R0 * Math.cos( alpha );
-		
 		this.selectedVert = 0;
-		if( !isBetween(c2x, 0, RLine) ) return false;
+
+		if( checkCursorOnBoundingModifier(x, y, this.X, this.Y ) )				this.selectedVert = 1;
+		else if( checkCursorOnBoundingModifier(x, y, this.EndX, this.EndY ) )	this.selectedVert = 2;
+
+		if( this.selectedVert > 0 ) return true;
+
 		
-		var c2y = R0 * Math.sin( alpha );
-		if( Math.abs( c2y ) < 2 ) return true;
+		var R = checkCursorOnLine( x, y, this.X, this.Y, this.EndX, this.EndY );
+		if( Math.abs( R ) < 2 ) return true;
 		
 		return false;
 	}

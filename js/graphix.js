@@ -19,6 +19,17 @@ function hexToRgb(hex) {
 }
 
 
+function fillPlaces(value, places) {
+    while( value.length < places ) value = "0" + value;
+    return value;
+}
+
+function value2hex(value, places = 2, base = 2) {
+    var hex = parseInt(value, base).toString(16);
+	hex = fillPlaces( hex, places );
+	return "0x" + hex;
+}
+
 function componentToHex(c, places = 2) {
 	var hex = c.toString(16);
 	while( hex.length < places ) hex = "0" + hex;
@@ -112,9 +123,7 @@ function printLine( x0, y0, x1, y1, color) {
 
 
 
-function fillRect( x, y, w, h, color) {
-    for ( i = x; i < parseInt(x) + parseInt(w); i++)	drawVLine(i, y, h, color);
-}
+
 
 function drawRect( x, y, w, h, color) {
     drawHLine(x, y, w, color);
@@ -123,7 +132,9 @@ function drawRect( x, y, w, h, color) {
 	drawVLine(parseInt(x) + parseInt(w) - 1, y, h, color);
 }
 
-
+function fillRect( x, y, w, h, color) {
+    for ( i = x; i < parseInt(x) + parseInt(w); i++)	drawVLine(i, y, h, color);
+}
 
 
 
@@ -288,8 +299,9 @@ function writeChar(c, colorOn, colorOff) {
 		cy += fontWidth * fontSize;
 		return;
 	}
+
+	if( typeof c == "string" ) c = parseInt(c.charCodeAt());
 	
-	c = parseInt(c.charCodeAt());
 	var i = 0; var j = 0;
 	var id = c * 6;
 	
@@ -310,11 +322,39 @@ function writeChar(c, colorOn, colorOff) {
 
 
 function printString(str, colorOn, colorOff ) {
-	for( var i = 0; i < str.length; i++)
-		writeChar(str[i], colorOn, colorOff);
+	for( var i = 0; i < str.length; i++) {
+		var c = str[i];
+		if( c == '\\' ) {
+			if( str[i + 1] == 'x' ) {
+				c = parseInt( str[i + 2] + str[i + 3], 16 );
+				i += 2;
+			}
+			i++;
+		}
+		writeChar(c, colorOn, colorOff);
+	}
 }
 
 
+
+
+
+function drawRGBBitmap(x, y, bitmap, w, h) {
+    for(var j = 0; j < h; j++) {
+        for(var i = 0; i < w; i++) {
+            setPixel( parseInt(x + i), parseInt(y + j), bitmap.getPixel(i, j));
+            
+        }
+    }
+}
+
+function drawBitmap(x, y, bitmap, w, h, color) {
+    for(var j = 0; j < h; j++) {
+        for(var i = 0; i < w; i++) {
+            if(bitmap.getPixel(i, j) == 1) setPixel( parseInt(x + i), parseInt(y + j), color);
+        }
+    }
+}
 
 
 

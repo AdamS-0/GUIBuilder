@@ -2,14 +2,19 @@ function generateCode() {
 	var strCode = "";
 	
 	var className = document.getElementById("className").value;
+
+	for( var i = 0; i < resources.length; i++ ) {
+		strCode += resources[i].generateCode(className);
+	}
+
 	for( var i = 0; i < screens.length; i++ ) {
 		strCode += screens[i].generateCode(className);
 	}
 	
 	// downloadContent(strCode, "project.c");
-	var codePanel = document.getElementById("txtCode");
+	var codePanel = document.getElementById("pCode");
 	codePanel.textContent = strCode;
-	showCode();
+	showTabCode();
 }
 
 
@@ -68,6 +73,11 @@ function codeFillCircle(className, x, y, r, color) {
 
 
 
+function codeDrawBitmap(className, x, y, bitmap_name, w, h, color) {
+	return "\t" + className + ".drawBitmap(" + x + ", " + y + ", " + bitmap_name + ", " + w + ", " + h + ", " + color + ");\n";
+}
 
-
+function codeDrawRGBBitmap(className, x, y, bitmap_name, w, h) {
+	return "\t" + className + ".drawRGBBitmap(" + x + ", " + y + ", " + bitmap_name + ", " + w + ", " + h + ");\n";
+}	
 

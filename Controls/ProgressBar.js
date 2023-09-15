@@ -64,21 +64,21 @@ class ProgressBar extends Rectangle {
 		
 	}
 	
-	getBoundingBox() {
-		this.forceParser();
-		var x = this.X, y = this.Y;
-		var w = this.Width, h = this.Height;
-		return {x, y, w, h};
-	}
+	// getBoundingBox() {
+	// 	this.forceParser();
+	// 	var x = this.X, y = this.Y;
+	// 	var w = this.Width, h = this.Height;
+	// 	return {x, y, w, h};
+	// }
 	
-	drawBounding(ctx) {
-		this.forceParser();
-		drawBoundingBox(ctx, this.getBoundingBox());
-		drawModifier(ctx, this.X + 0.5, this.Y + 0.5);
-		drawModifier(ctx, this.X + this.Width - 0.5, this.Y + 0.5);
-		drawModifier(ctx, this.X + this.Width - 0.5, this.Y + this.Height - 0.5);
-		drawModifier(ctx, this.X + 0.5, this.Y + this.Height - 0.5);
-	}
+	// drawBounding(ctx) {
+	// 	this.forceParser();
+	// 	drawBoundingBox(ctx, this.getBoundingBox());
+	// 	drawModifier(ctx, this.X + 0.5, this.Y + 0.5);
+	// 	drawModifier(ctx, this.X + this.Width - 0.5, this.Y + 0.5);
+	// 	drawModifier(ctx, this.X + this.Width - 0.5, this.Y + this.Height - 0.5);
+	// 	drawModifier(ctx, this.X + 0.5, this.Y + this.Height - 0.5);
+	// }
 
 	
 	generateCode(className = "tft", oneColor = 0) {

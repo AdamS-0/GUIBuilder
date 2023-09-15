@@ -1,5 +1,5 @@
 
-const controlsLst = [ "Circle", "Label", "Line", "ProgressBar", "Rectangle" ];
+const controlsLst = [ "Bitmap", "Circle", "Gauge", "Label", "Line", "ProgressBar", "Rectangle", "Triangle" ];
 
 var selectedControl = null;
 var screens = new Array();
@@ -14,7 +14,7 @@ function onload() {
 	addNewScreen("");
 	loadToolBox();
 	loadScreensList();
-	showEditor();
+	showTabEditor();
 }
 
 function loadToolBox() {
@@ -86,6 +86,9 @@ function createControlByType(type, x = 0, y = 0) {
 	else if( type == "Rectangle" ) c = new Rectangle("", x, y);
 	else if( type == "Circle" ) c = new Circle("", x, y);
 	else if( type == "ProgressBar" ) c = new ProgressBar("", x, y);
+	else if( type == "Bitmap" ) c = new Bitmap("", x, y);
+	else if( type == "Gauge" ) c = new Gauge("", x, y);
+	else if( type == "Triangle" ) c = new Triangle("", x, y);
 	else c = new Control("", x, y);
 	return c;
 }
@@ -103,6 +106,8 @@ function addNewControl(name, x, y, refresh = 1) {
 	if(refresh) loadScreensList();
 	return c;
 }
+
+
 
 function deleteControl(scr, cntrl, _showProps = 1) {
 	if (scr == null) return;
@@ -202,33 +207,58 @@ function refreshCurrentScreen() {
 
 
 
+function getMiddlePanels() {
+	var _pEditor = document.getElementById("pEditor");
+	var _pCode = document.getElementById("pCode");
+	var _pResources = document.getElementById("pResources");
+	
+	var _btnEditor = document.getElementById("btnTabEditor");
+	var _btnCode = document.getElementById("btnTabCode");
+	var _btnResources = document.getElementById("btnTabResources");
 
+	var LPanels = { Editor: _pEditor , Code: _pCode, Resources: _pResources };
+	var LBtns = { Editor: _btnEditor, Code : _btnCode, Resources: _btnResources };
 
-function showEditor() {
-	var editorPanel = document.getElementById("editor");
-	var codePanel = document.getElementById("txtCode");
-	var btnEditor = document.getElementById("btnTabEditor");
-	var btnCode = document.getElementById("btnTabCode");
+	var ListPanels = [ _pEditor ,  _pCode, _pResources ];
+	var ListBtns = [ _btnEditor, _btnCode, _btnResources ];
 
-	editorPanel.style.display = "inline-block";
-	codePanel.style.display = "none";
+	return {List: {Panels: ListPanels, Buttons: ListBtns}, Panels: LPanels, Buttons: LBtns};
+}
 
-	btnEditor.style.background = "#ddd";
-	btnCode.style.background = "inherit";
+function hidePanels(panelsBtns) {
+	panelsBtns.List.Panels.forEach(elPanel => { elPanel.style.display = "none"; });
+	panelsBtns.List.Buttons.forEach(elBtn => { elBtn.style.background = "inherit"; });
+}
+
+function showTabPanel(tabBtn, panel) {
+	tabBtn.style.background = "#ddd";
+	panel.style.display = "inline-block";
+}
+
+function showTabEditor() {
+	var panelsBtns = getMiddlePanels();
+	hidePanels(panelsBtns);
+	showTabPanel(panelsBtns.Buttons.Editor, panelsBtns.Panels.Editor);
 }
 
 
-function showCode() {
-	var editorPanel = document.getElementById("editor");
-	var codePanel = document.getElementById("txtCode");
-	var btnEditor = document.getElementById("btnTabEditor");
-	var btnCode = document.getElementById("btnTabCode");
-
-	codePanel.style.display = "inline-block";
-	editorPanel.style.display = "none";
-	btnCode.style.background = "#ddd";
-	btnEditor.style.background = "inherit";
+function showTabCode() {
+	var panelsBtns = getMiddlePanels();
+	hidePanels(panelsBtns);
+	showTabPanel(panelsBtns.Buttons.Code, panelsBtns.Panels.Code);
 }
+
+
+function showTabResources() {
+	var panelsBtns = getMiddlePanels();
+	hidePanels(panelsBtns);
+	showTabPanel(panelsBtns.Buttons.Resources, panelsBtns.Panels.Resources);
+
+	showResources();
+}
+
+
+
 
 
 
@@ -264,4 +294,37 @@ function getCursorPositionFromEvent(event) {
 
 
 
+var controls2copy = new Array();
+function copyControl() {
+	controls2copy = [];
+	controls2copy = getSelectedControls();
+}
+
+
+function pasteControl() {
+	
+	if( controls2copy.length <= 0 ) return;
+
+	if( selectedScreen < 0 ) addNewScreen();
+
+	var controlsToSelect = new Array();
+	for( var i = 0; i < controls2copy.length; i++ ) {
+		var control2copy = controls2copy[i];
+		var c = createControlByType(control2copy["Type"]);
+		c.ParentScreen = screens[selectedScreen];
+		screens[selectedScreen].Controls.push( c );
+
+		for( var key in control2copy ) {
+			if( key != "ParentScreen" && key != "Name" && key != "FunctionName" ) c[key] = control2copy[key];
+		}
+
+		c.tryCursorMove(10, 10);
+		c.Name = control2copy.Name + "1";
+		controlsToSelect.push(c);
+	}
+
+	controls2copy.forEach( ctrl => ctrl.Selected = false );
+	controlsToSelect.forEach( ctrl => ctrl.Selected = true );
+	loadScreensList();
+}
 
