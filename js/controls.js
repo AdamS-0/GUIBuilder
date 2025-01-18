@@ -14,9 +14,18 @@ function createRow(sender, tab, propType, propertyName, propertyValue, comboOpti
 			if( propertyValue == comboOptions[i] ) optEl.selected = true;
 		}
 	} else {
-		elemInput = document.createElement("input"); elemInput.type = propType; elemInput.value = propertyValue;
-		if( propType == "number" ) elemInput.min = 0;
-		if( propType == "checkbox" ) elemInput.checked = propertyValue;
+		if( propType == "textarea" ) {
+            elemInput = document.createElement("textarea");
+            elemInput.setAttribute("rows", "4");
+            //elemInput.setAttribute("style", "width:250px;height:150px;");
+        } else {
+            elemInput = document.createElement("input");
+            elemInput.type = propType;
+        }
+        elemInput.value = propertyValue;
+		if( propType == "number" ) { elemInput.min = 0; }
+        if( propType == "checkbox" ) { elemInput.checked = propertyValue; }
+        
 		
 	}
 
@@ -57,9 +66,12 @@ function isBetween(v, a, b) {
 
 function screenItemClick(e) {
 	scrName = e.target.name;
-	
 	scr = screens.find( s => s.Name == scrName );
-	selectedScreen = screens.indexOf(scr);
+    
+    e.stopPropagation();
+    
+    if(scr == null) { return; }
+    selectedScreen = screens.indexOf(scr);
 	loadScreensList();
 	showProps(scr);
 	
@@ -69,16 +81,22 @@ function screenItemClick(e) {
 }
 
 function screenItemDoubleClick(e) {
-	scrName = e.target.name;
+    console.log(e);
 	
+    scrName = e.target.name;
 	scr = screens.find( s => s.Name == scrName );
-	scr.showControlsAtList = !scr.showControlsAtList;
+    scr.showControlsAtList = !scr.showControlsAtList;
 	//selectedScreen = screens.indexOf(scr);
 	loadScreensList();
 	// showProps(scr);
 	// selectedControl = null;
+    
 }
 
+
+function screnCollapseBtnClick(e) {
+    console.log(e);
+}
 
 
 function controlItemClick(e) {

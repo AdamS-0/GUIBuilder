@@ -1,5 +1,5 @@
 
-const controlsLst = [ "Bitmap", "Circle", "Gauge", "Label", "Line", "ProgressBar", "Rectangle", "Triangle" ];
+const controlsLst = [ "Bitmap", "Circle", "Gauge", "Label", "Line", "ProgressBar", "Rectangle", "Triangle", "Menu" ];
 
 var selectedControl = null;
 var screens = new Array();
@@ -30,18 +30,29 @@ function loadToolBox() {
 	}
 }
 
+function test1(){console.log("123");}
 
 function loadScreensList() {
 	var p = document.getElementById("treeScreens");
 	p.innerHTML = "";
 	
 	for( var i = 0; i < screens.length; i++ ) {
-		var item = document.createElement("screenItem" + ( selectedScreen == i ? "Selected" : ""));
-		item.innerHTML = "[" + (screens[i].showControlsAtList ? "\\/" : "/\\") + "] " + screens[i].Name + ( selectedScreen == i ? " <- Selected" : "");
-		item.name = screens[i].Name;
+        var item = document.createElement("screenItem" + ( selectedScreen == i ? "Selected" : ""));
+        
+        item.name = screens[i].Name;
 		item.onmousedown = screenItemClick;
-		item.ondblclick = screenItemDoubleClick;
+		//item.ondblclick = screenItemDoubleClick;
 		item.oncontextmenu = contextMenuTreeScreens;
+        
+        var collapseBtn = document.createElement("flatBtn");
+        collapseBtn.innerHTML = "[" + (screens[i].showControlsAtList ? "\\/" : "/\\") + "]";
+        collapseBtn.name = "collapseBtn_" + screens[i].Name;
+        collapseBtn.scrName = item.name;
+        collapseBtn.onclick = screnCollapseBtnClick;
+        item.appendChild(collapseBtn);
+        
+        item.innerHTML = item.innerHTML + " " + screens[i].Name + ( selectedScreen == i ? " <- Selected" : "");
+        
 		p.appendChild(item);
 		
 		if( screens[i].showControlsAtList ) {
@@ -89,7 +100,8 @@ function createControlByType(type, x = 0, y = 0) {
 	else if( type == "Bitmap" ) c = new Bitmap("", x, y);
 	else if( type == "Gauge" ) c = new Gauge("", x, y);
 	else if( type == "Triangle" ) c = new Triangle("", x, y);
-	else c = new Control("", x, y);
+	else if( type == "Menu" ) c = new Menu("", x, y);
+    else c = new Control("", x, y);
 	return c;
 }
 
@@ -163,6 +175,18 @@ function duplicateScreen() {
 	loadScreensList();
 	selectedScreen = screens.length - 1;
 	selectedScreenChanged();
+}
+
+
+function collapseScreen() {
+    if (selectedScreen < 0 || selectedScreen >= screens.length) return;
+    
+	scr = screens[selectedScreen];
+    scr.showControlsAtList = !scr.showControlsAtList;
+	//selectedScreen = screens.indexOf(scr);
+	loadScreensList();
+	// showProps(scr);
+	// selectedControl = null;
 }
 
 
