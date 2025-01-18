@@ -7,6 +7,10 @@ function generateCode() {
 		strCode += resources[i].generateCode(className);
 	}
 
+    if( Menu.cnum > 0 ) {
+        strCode += Menu.generateFunctionToDraw(className);
+    }
+
 	for( var i = 0; i < screens.length; i++ ) {
 		strCode += screens[i].generateCode(className);
 	}

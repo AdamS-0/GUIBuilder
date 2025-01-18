@@ -75,7 +75,7 @@ class Screen{
 		var strCode = "";
 
 		for( var i = 0; i < this.Controls.length; i++ ) {
-			if( this.Controls[i].GotUpdater ) {
+			if( this.Controls[i].GotUpdater || this.Controls[i].Type == "Menu" ) {
 				strCode += "\n// call this function to refresh control: " + this.Controls[i].Name + "\n";
 				strCode += this.Controls[i].generateCodeUpdater(className, this.OneColor);
 			}

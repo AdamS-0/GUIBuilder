@@ -24,6 +24,11 @@ Code can be generated at every step of GUI designing, by choosing option Generat
 Note: Make sure to enable checkbox for every Screen, which should be displayed on single color display (like SSD1306)!
 
 ## Changes
+18 January 2025:
+* Added new control: Menu
+* Feature: Screen collapsible under PPM in project tree
+* Fixed left alignment  of 8 bit ASCII font
+
 06 August 2023:
 * Fixed displaying 8bit ASCII font
 * Fixed Gauge refreshing
