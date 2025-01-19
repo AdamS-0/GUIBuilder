@@ -3,16 +3,16 @@ class Menu extends Control {
 	Text            = "Menu";
     TextSize        = 1;
     
-    Elements        = "";
+    Elements        = "Opt 1\nOpt 2\nOpt 3";
     ElementSize     = 1;
-    ElemsToShow     = 1;
+    ElemsToShow     = 3;
     RowSpacing      = 2;
     
     SelectedId     = 0;
     
     ShowSelector    = 1; // 1
     Selector        = ">";
-    SelectSize      = 2;
+    SelectSize      = 1;
     
     LineNum         = 0; // 2
     LineNumSel      = 0; // 4

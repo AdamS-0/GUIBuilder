@@ -23,7 +23,7 @@ function loadToolBox() {
 	for( var i = 0; i < controlsLst.length; i++ ) {
 		var item = document.createElement("listViewItem");
 		item.innerHTML = controlsLst[i];
-		item.name = controlsLst[i];;
+		item.name = controlsLst[i];
 		item.draggable = "true";
 		item.ondragstart = drag;
 		p.appendChild(item);
