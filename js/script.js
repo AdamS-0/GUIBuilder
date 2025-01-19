@@ -1,5 +1,5 @@
 
-const controlsLst = [ "Bitmap", "Circle", "Gauge", "Label", "Line", "ProgressBar", "Rectangle", "Triangle", "Menu" ];
+const controlsLst = [ "Bitmap", "Circle", "Gauge", "Label", "Line", "Menu", "ProgressBar", "Rectangle", "Triangle" ];
 
 var selectedControl = null;
 var screens = new Array();
