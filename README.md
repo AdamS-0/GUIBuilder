@@ -24,6 +24,10 @@ Code can be generated at every step of GUI designing, by choosing option Generat
 Note: Make sure to enable checkbox for every Screen, which should be displayed on single color display (like SSD1306)!
 
 ## Changes
+02 August 2025:
+* Added new control: Graph
+* Fixed code generation
+
 19 January 2025:
 * Changed default Menu's parameters
 
