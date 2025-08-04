@@ -146,11 +146,11 @@
 
 	<div class="hide" id="contextMenuEditor" onmouseleave="hideContextMenu(this)">
 		<ul>
-			<dropdownOption onclick="copyControl(); hideContextMenu(contextMenuEditor);">Copy control</dropdownOption>
-			<dropdownOption onclick="pasteControl(); hideContextMenu(contextMenuEditor);">Paste control</dropdownOption>
+			<dropdownOption onclick="copyControl(); hideContextMenu(contextMenuEditor);">Copy control (Ctrl + C)</dropdownOption>
+			<dropdownOption onclick="pasteControl(); hideContextMenu(contextMenuEditor);">Paste control (Ctrl + V)</dropdownOption>
 			<dropdownOption onclick="bringControlToFront(); hideContextMenu(contextMenuEditor);">Bring to front</dropdownOption>
 			<dropdownOption onclick="sendControlToBack(); hideContextMenu(contextMenuEditor);">Send to back</dropdownOption>
-			<dropdownOption onclick="deleteSelectedControls(); hideContextMenu(contextMenuEditor);">Delete</dropdownOption>
+			<dropdownOption onclick="deleteSelectedControls(); hideContextMenu(contextMenuEditor);">Delete (Del)</dropdownOption>
 			<dropdownOption>
 				<btnAlignLeftOut onclick="selCtrlsSetAlign(Align.HLeftOut)"></btnAlignLeftOut>
 				<btnAlignLeft onclick="selCtrlsSetAlign(Align.HLeft)"></btnAlignLeft>

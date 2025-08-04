@@ -319,14 +319,18 @@ function getCursorPositionFromEvent(event) {
 
 
 var controls2copy = new Array();
+var copyCurPos = {X:0, Y:0};
 function copyControl() {
     controls2copy = [];
     controls2copy = getSelectedControls();
+    copyCurPos = getLastCursorPos();
+    console.log( copyCurPos );
 }
 
 
 function pasteControl() {
-    
+    pos = getLastCursorPos();
+
     if( controls2copy.length <= 0 ) return;
 
     if( selectedScreen < 0 ) addNewScreen();
@@ -342,7 +346,12 @@ function pasteControl() {
             if( key != "ParentScreen" && key != "Name" && key != "FunctionName" ) c[key] = control2copy[key];
         }
 
-        c.tryCursorMove(10, 10);
+        console.log(pos);
+        console.log(copyCurPos);
+        c.tryCursorMove(
+            Number(pos.X) - Number(copyCurPos.X),
+            Number(pos.Y) - Number(copyCurPos.Y) );
+
         c.Name = control2copy.Name + "1";
         controlsToSelect.push(c);
     }
