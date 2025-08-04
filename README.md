@@ -24,6 +24,13 @@ Code can be generated at every step of GUI designing, by choosing option Generat
 Note: Make sure to enable checkbox for every Screen, which should be displayed on single color display (like SSD1306)!
 
 ## Changes
+04 August 2025:
+* Added new function to Control class: setPos(x, y)
+* Added shortcuts for copy/paste of controls
+* Added shortcut for "Delete control" -> Del
+* Changed position of pasted control, now relative to mouse position during copying
+
+
 02 August 2025:
 * Added new control: Graph
 * Fixed code generation
