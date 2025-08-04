@@ -13,18 +13,39 @@ function setShiftKeyPressed(state) {
 	shiftPressed = state;
 }
 
+var KEY_LEFT 	= 37;
+var KEY_UP 		= 38;
+var KEY_RIGHT 	= 39;
+var KEY_DOWN 	= 40;
+var KEY_DEL	 	= 46;
+var KEY_C 		= 67;
+var KEY_V 		= 86;
 
 function UI_onkeydown(ev) {
 	setShiftKeyPressed(ev.shiftKey);
 	var selectedControls = getSelectedControls();
+	
 	if( selectedControls.length > 0 ) {
 		key = ev.keyCode;
-		if( key >= 37 && key <= 40 ) {
-			var dx = 0 + -1*(key == 37) + (key == 39);
-			var dy = 0 + -1*(key == 38) + (key == 40);
+		if( key >= KEY_LEFT && key <= KEY_DOWN ) {
+			var dx = 0 + -1*(key == KEY_LEFT) + (key == KEY_RIGHT);
+			var dy = 0 + -1*(key == KEY_UP) + (key == KEY_DOWN);
+
+			if( ev.ctrlKey ) {
+				dx *= 10;
+				dy *= 10;
+			}
 
 			selectedControls.forEach( ctrl => { if(ctrl.Selected) ctrl.moveBy(dx, dy); } );
+		} else if ( key == KEY_DEL ) {
+			deleteSelectedControls();
+		} else if ( (key == KEY_C) && (ev.ctrlKey) ) {
+			copyControl();
 		}
+	}
+	
+	if ( (ev.keyCode == KEY_V) && (ev.ctrlKey) ) {
+		pasteControl();
 	}
 }
 
@@ -116,14 +137,23 @@ function canvasUp(e) {
 }
 
 
-function canvasMouseMove(mouseEvent) {
-	if(!mouseMoving) return;
+var lastCursorPos = {X:0, Y:0};
+function getLastCursorPos() {
+	return structuredClone(lastCursorPos);
+}
 
+function canvasMouseMove(mouseEvent) {
 	var cvs = document.getElementById("canvas");
 	var cvsRect = cvs.getBoundingClientRect();
 
 	var px2 = Math.floor( ( mouseEvent.pageX - cvsRect.left ) / scaleK );
 	var py2 = Math.floor( ( mouseEvent.pageY - cvsRect.top ) / scaleK );
+	
+	lastCursorPos.X = px2;
+	lastCursorPos.Y = py2;
+
+	if(!mouseMoving) return;
+	
 	var dx = parseInt(px2) - topInfo.cursor.X;
 	var dy = parseInt(py2) - topInfo.cursor.Y;
 	deltaMove = {dx, dy};

@@ -86,6 +86,10 @@ class Control {
 		this.requiredRefresh();
 	}
 
+	setPos(x, y) {
+		this.X = x;
+		this.Y = y;
+	}
 
 
 
